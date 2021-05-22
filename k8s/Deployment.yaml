@@ -14,8 +14,16 @@ spec:
       labels:
         app: orbit
     spec:
+      securityContext:
+        runAsNonRoot: true
       containers:
       - name: server
         image: ghcr.io/dsschult/orb-it:main
+        imagePullPolicy: Always
+        env:
+        - name: PORT
+          value: "8080"
         ports:
-        - containerPort: 80
+        - containerPort: 8080
+        securityContext:
+          runAsUser: 65534

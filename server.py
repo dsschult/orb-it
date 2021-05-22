@@ -37,7 +37,7 @@ class MainHandler(tornado.web.RequestHandler):
 
     async def get(self):
         self.write('Hello world\n')
-        self.write('Token: '+self.auth.create_token())
+        self.write('Token: '+self.auth.create_token('user'))
 
 def authenticated(method):
     @wraps(method)

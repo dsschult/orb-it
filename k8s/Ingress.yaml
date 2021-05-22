@@ -6,7 +6,9 @@ metadata:
     # use the shared ingress-nginx
     kubernetes.io/ingress.class: "nginx"
     #nginx.ingress.kubernetes.io/enable-cors: "true"
-    cert-manager.io/cluster-issuer: letsencrypt-staging
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
   rules:
   - host: orb-it.dsschult.com
