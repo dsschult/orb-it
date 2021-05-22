@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orbit-deployment
+  labels:
+    app: orbit
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: orbit
+  template:
+    metadata:
+      labels:
+        app: orbit
+    spec:
+      containers:
+      - name: server
+        image: ghcr.io/dsschult/orb-it:main
+        ports:
+        - containerPort: 80
