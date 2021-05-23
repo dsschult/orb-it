@@ -21,3 +21,7 @@ spec:
             name: orbit-service
             port:
               number: 80
+  tls:
+  - hosts:
+    - orb-it.dsschult.com
+    secretName: orbit-ingress-cert
