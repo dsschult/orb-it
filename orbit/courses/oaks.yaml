@@ -1,0 +1,296 @@
+name: The Oaks
+holes:
+- par: 4
+  hcp: 7
+  yardages:
+    Scarlet: 372
+    Black: 353
+    Blue: 349
+    White: 311
+    Green: 290
+- par: 3
+  hcp: 15
+  yardages:
+    Scarlet: 155
+    Black: 148
+    Blue: 122
+    White: 118
+    Green: 97
+- par: 5
+  hcp: 9
+  yardages:
+    Scarlet: 552
+    Black: 525
+    Blue: 520
+    White: 487
+    Green: 446
+- par: 5
+  hcp: 5
+  yardages:
+    Scarlet: 534
+    Black: 526
+    Blue: 459
+    White: 459
+    Green: 401
+- par: 3
+  hcp: 17
+  yardages:
+    Scarlet: 171
+    Black: 149
+    Blue: 149
+    White: 126
+    Green: 104
+- par: 4
+  hcp: 3
+  yardages:
+    Scarlet: 467
+    Black: 434
+    Blue: 413
+    White: 409
+    Green: 381
+- par: 3
+  hcp: 13
+  yardages:
+    Scarlet: 192
+    Black: 175
+    Blue: 170
+    White: 157
+    Green: 150
+- par: 4
+  hcp: 11
+  yardages:
+    Scarlet: 421
+    Black: 390
+    Blue: 361
+    White: 357
+    Green: 323
+- par: 5
+  hcp: 1
+  yardages:
+    Scarlet: 518
+    Black: 492
+    Blue: 489
+    White: 443
+    Green: 422
+- par: 3
+  hcp: 16
+  yardages:
+    Scarlet: 174
+    Black: 148
+    Blue: 144
+    White: 125
+    Green: 108
+- par: 4
+  hcp: 4
+  yardages:
+    Scarlet: 431
+    Black: 415
+    Blue: 409
+    White: 319
+    Green: 295
+- par: 4
+  hcp: 10
+  yardages:
+    Scarlet: 403
+    Black: 380
+    Blue: 377
+    White: 350
+    Green: 309
+- par: 3
+  hcp: 18
+  yardages:
+    Scarlet: 187
+    Black: 161
+    Blue: 154
+    White: 147
+    Green: 120
+- par: 4
+  hcp: 6
+  yardages:
+    Scarlet: 435
+    Black: 403
+    Blue: 352
+    White: 347
+    Green: 307
+- par: 5
+  hcp: 12
+  yardages:
+    Scarlet: 528
+    Black: 481
+    Blue: 475
+    White: 437
+    Green: 365
+- par: 4
+  hcp: 8
+  yardages:
+    Scarlet: 436
+    Black: 405
+    Blue: 400
+    White: 363
+    Green: 334
+- par: 3
+  hcp: 14
+  yardages:
+    Scarlet: 240
+    Black: 215
+    Blue: 185
+    White: 181
+    Green: 159
+- par: 5
+  hcp: 2
+  yardages:
+    Scarlet: 547
+    Black: 510
+    Blue: 483
+    White: 479
+    Green: 460
+---
+name: The Oaks (front)
+holes:
+- par: 4
+  hcp: 7
+  yardages:
+    Scarlet: 372
+    Black: 353
+    Blue: 349
+    White: 311
+    Green: 290
+- par: 3
+  hcp: 15
+  yardages:
+    Scarlet: 155
+    Black: 148
+    Blue: 122
+    White: 118
+    Green: 97
+- par: 5
+  hcp: 9
+  yardages:
+    Scarlet: 552
+    Black: 525
+    Blue: 520
+    White: 487
+    Green: 446
+- par: 5
+  hcp: 5
+  yardages:
+    Scarlet: 534
+    Black: 526
+    Blue: 459
+    White: 459
+    Green: 401
+- par: 3
+  hcp: 17
+  yardages:
+    Scarlet: 171
+    Black: 149
+    Blue: 149
+    White: 126
+    Green: 104
+- par: 4
+  hcp: 3
+  yardages:
+    Scarlet: 467
+    Black: 434
+    Blue: 413
+    White: 409
+    Green: 381
+- par: 3
+  hcp: 13
+  yardages:
+    Scarlet: 192
+    Black: 175
+    Blue: 170
+    White: 157
+    Green: 150
+- par: 4
+  hcp: 11
+  yardages:
+    Scarlet: 421
+    Black: 390
+    Blue: 361
+    White: 357
+    Green: 323
+- par: 5
+  hcp: 1
+  yardages:
+    Scarlet: 518
+    Black: 492
+    Blue: 489
+    White: 443
+    Green: 422
+---
+name: The Oaks (back)
+holes:
+- par: 3
+  hcp: 16
+  yardages:
+    Scarlet: 174
+    Black: 148
+    Blue: 144
+    White: 125
+    Green: 108
+- par: 4
+  hcp: 4
+  yardages:
+    Scarlet: 431
+    Black: 415
+    Blue: 409
+    White: 319
+    Green: 295
+- par: 4
+  hcp: 10
+  yardages:
+    Scarlet: 403
+    Black: 380
+    Blue: 377
+    White: 350
+    Green: 309
+- par: 3
+  hcp: 18
+  yardages:
+    Scarlet: 187
+    Black: 161
+    Blue: 154
+    White: 147
+    Green: 120
+- par: 4
+  hcp: 6
+  yardages:
+    Scarlet: 435
+    Black: 403
+    Blue: 352
+    White: 347
+    Green: 307
+- par: 5
+  hcp: 12
+  yardages:
+    Scarlet: 528
+    Black: 481
+    Blue: 475
+    White: 437
+    Green: 365
+- par: 4
+  hcp: 8
+  yardages:
+    Scarlet: 436
+    Black: 405
+    Blue: 400
+    White: 363
+    Green: 334
+- par: 3
+  hcp: 14
+  yardages:
+    Scarlet: 240
+    Black: 215
+    Blue: 185
+    White: 181
+    Green: 159
+- par: 5
+  hcp: 2
+  yardages:
+    Scarlet: 547
+    Black: 510
+    Blue: 483
+    White: 479
+    Green: 460

@@ -1,0 +1,312 @@
+name: Yahara East
+holes:
+- par: 4
+  hcp: 3
+  yardages:
+    Black: 415
+    Blue: 405
+    White: 393
+    WhiteGold: 381
+    Gold: 381
+- par: 5
+  hcp: 11
+  yardages:
+    Black: 519
+    Blue: 503
+    White: 479
+    WhiteGold: 479
+    Gold: 411
+- par: 3
+  hcp: 17
+  yardages:
+    Black: 190
+    Blue: 176
+    White: 156
+    WhiteGold: 156
+    Gold: 136
+- par: 4
+  hcp: 1
+  yardages:
+    Black: 438
+    Blue: 423
+    White: 401
+    WhiteGold: 333
+    Gold: 333
+- par: 5
+  hcp: 13
+  yardages:
+    Black: 521
+    Blue: 502
+    White: 472
+    WhiteGold: 472
+    Gold: 401
+- par: 4
+  hcp: 5
+  yardages:
+    Black: 419
+    Blue: 402
+    White: 375
+    WhiteGold: 316
+    Gold: 316
+- par: 4
+  hcp: 7
+  yardages:
+    Black: 397
+    Blue: 379
+    White: 350
+    WhiteGold: 350
+    Gold: 296
+- par: 3
+  hcp: 15
+  yardages:
+    Black: 177
+    Blue: 168
+    White: 157
+    WhiteGold: 157
+    Gold: 146
+- par: 4
+  hcp: 9
+  yardages:
+    Black: 398
+    Blue: 389
+    White: 373
+    WhiteGold: 318
+    Gold: 318
+- par: 4
+  hcp: 4
+  yardages:
+    Black: 447
+    Blue: 430
+    White: 403
+    WhiteGold: 367
+    Gold: 367
+- par: 3
+  hcp: 18
+  yardages:
+    Black: 204
+    Blue: 194
+    White: 182
+    WhiteGold: 150
+    Gold: 150
+- par: 4
+  hcp: 6
+  yardages:
+    Black: 204
+    Blue: 194
+    White: 182
+    WhiteGold: 150
+    Gold: 150
+- par: 4
+  hcp: 6
+  yardages:
+    Black: 423
+    Blue: 410
+    White: 390
+    WhiteGold: 364
+    Gold: 364
+- par: 5
+  hcp: 8
+  yardages:
+    Black: 526
+    Blue: 507
+    White: 476
+    WhiteGold: 476
+    Gold: 419
+- par: 4
+  hcp: 10
+  yardages:
+    Black: 393
+    Blue: 381
+    White: 365
+    WhiteGold: 320
+    Gold: 320
+- par: 4
+  hcp: 14
+  yardages:
+    Black: 383
+    Blue: 353
+    White: 365
+    WhiteGold: 320
+    Gold: 320
+- par: 4
+  hcp: 2
+  yardages:
+    Black: 414
+    Blue: 404
+    White: 391
+    WhiteGold: 311
+    Gold: 311
+- par: 3
+  hcp: 16
+  yardages:
+    Black: 191
+    Blue: 183
+    White: 175
+    WhiteGold: 175
+    Gold: 167
+- par: 5
+  hcp: 12
+  yardages:
+    Black: 528
+    Blue: 511
+    White: 484
+    WhiteGold: 484
+    Gold: 424
+---
+name: Yahara East (front)
+holes:
+- par: 4
+  hcp: 3
+  yardages:
+    Black: 415
+    Blue: 405
+    White: 393
+    WhiteGold: 381
+    Gold: 381
+- par: 5
+  hcp: 11
+  yardages:
+    Black: 519
+    Blue: 503
+    White: 479
+    WhiteGold: 479
+    Gold: 411
+- par: 3
+  hcp: 17
+  yardages:
+    Black: 190
+    Blue: 176
+    White: 156
+    WhiteGold: 156
+    Gold: 136
+- par: 4
+  hcp: 1
+  yardages:
+    Black: 438
+    Blue: 423
+    White: 401
+    WhiteGold: 333
+    Gold: 333
+- par: 5
+  hcp: 13
+  yardages:
+    Black: 521
+    Blue: 502
+    White: 472
+    WhiteGold: 472
+    Gold: 401
+- par: 4
+  hcp: 5
+  yardages:
+    Black: 419
+    Blue: 402
+    White: 375
+    WhiteGold: 316
+    Gold: 316
+- par: 4
+  hcp: 7
+  yardages:
+    Black: 397
+    Blue: 379
+    White: 350
+    WhiteGold: 350
+    Gold: 296
+- par: 3
+  hcp: 15
+  yardages:
+    Black: 177
+    Blue: 168
+    White: 157
+    WhiteGold: 157
+    Gold: 146
+- par: 4
+  hcp: 9
+  yardages:
+    Black: 398
+    Blue: 389
+    White: 373
+    WhiteGold: 318
+    Gold: 318
+---
+name: Yahara East (back)
+holes:
+- par: 4
+  hcp: 4
+  yardages:
+    Black: 447
+    Blue: 430
+    White: 403
+    WhiteGold: 367
+    Gold: 367
+- par: 3
+  hcp: 18
+  yardages:
+    Black: 204
+    Blue: 194
+    White: 182
+    WhiteGold: 150
+    Gold: 150
+- par: 4
+  hcp: 6
+  yardages:
+    Black: 204
+    Blue: 194
+    White: 182
+    WhiteGold: 150
+    Gold: 150
+- par: 4
+  hcp: 6
+  yardages:
+    Black: 423
+    Blue: 410
+    White: 390
+    WhiteGold: 364
+    Gold: 364
+- par: 5
+  hcp: 8
+  yardages:
+    Black: 526
+    Blue: 507
+    White: 476
+    WhiteGold: 476
+    Gold: 419
+- par: 4
+  hcp: 10
+  yardages:
+    Black: 393
+    Blue: 381
+    White: 365
+    WhiteGold: 320
+    Gold: 320
+- par: 4
+  hcp: 14
+  yardages:
+    Black: 383
+    Blue: 353
+    White: 365
+    WhiteGold: 320
+    Gold: 320
+- par: 4
+  hcp: 2
+  yardages:
+    Black: 414
+    Blue: 404
+    White: 391
+    WhiteGold: 311
+    Gold: 311
+- par: 3
+  hcp: 16
+  yardages:
+    Black: 191
+    Blue: 183
+    White: 175
+    WhiteGold: 175
+    Gold: 167
+- par: 5
+  hcp: 12
+  yardages:
+    Black: 528
+    Blue: 511
+    White: 484
+    WhiteGold: 484
+    Gold: 424

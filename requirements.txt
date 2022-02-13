@@ -1,2 +1,7 @@
+motor
 pyjwt
+pytest
+pytest-asyncio
+pytest-mock
 tornado
+pyyaml

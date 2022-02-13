@@ -1,0 +1,146 @@
+header, header h1, header .account, nav, nav ol, footer {
+    display: inline-flex;
+    margin: 0;
+    padding: 0;
+}
+header {
+    background: #fafafa;
+    height: 60px;
+    width: 100%;
+}
+header h1 {
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+header h1 a {
+    text-decoration: none;
+    color: darkgreen;
+}
+header h1 a img {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 60px;
+    text-align: center;
+}
+nav {
+    background: #fafafa;
+    border-bottom: 1px solid black;
+    height: 2em;
+    font-size: 1.2rem;
+    width: 100%;
+}
+nav ol {
+    margin: 0 1em;
+    vertical-align: top;
+}
+nav li {
+    margin: 0 .4em;
+    display: inline-flex;
+    align-items: center;
+    _cursor: pointer;
+    height: 100%;
+}
+nav li a {
+    padding: 0 1em;
+    text-transform: capitalize;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    background: #0064002e;
+}
+nav li:hover {
+    text-decoration: underline;
+}
+nav li.active {
+    background: #00640053;
+}
+#page-container {
+    position: relative;
+    min-height: 100vh;
+}
+footer {
+    align-items: center;
+    background: #fafafa;
+    border-top: 1px solid black;
+    width: 100%;
+    min-height: 1.5em;
+    position: absolute;
+    bottom: 0;
+}
+footer p.copyright {
+    text-align: right;
+    margin: 0 .25em 0 0;
+    width: 100%;
+}
+
+main {
+    padding: 1em 1em 1.5em;
+}
+
+span.code {
+    font-family: monospace;
+    font-size: 133%;
+    background: rgba(0,0,0,0.1);
+}
+span.red {
+    color: red;
+}
+.italics {
+    font-style: italic;
+}
+span.login-link {
+    cursor: pointer;
+    text-decoration: underline;
+    color: blue;
+}
+div.indent {
+    margin-left: 1em;
+}
+div.double_indent {
+    margin-left: 2em;
+}
+div.inline {
+    display: inline-block;
+}
+
+div.error_box {
+    margin: 1em 1.5em;
+    padding: .7em;
+    font-size: 16pt;
+    border: 1px solid #666;
+}
+
+div.selection {
+    margin-bottom: 1em;
+}
+
+.scorecard {
+    border: 1px solid black;
+    padding: 1em;
+    display: inline-block;
+}
+.scorecard tr td:first-child, .scorecard tr th:first-child {
+    text-align: left;
+}
+.scorecard tr>*:not(:first-child) {
+    text-align: right;
+    padding-left: 1em;
+}
+.scorecard table {
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+.scorecard tr>* {
+    border: 1px solid grey;
+}
+.scorecard tr.hole th, .scorecard tr.par td {
+    border-bottom: 2px solid black;
+}
+.scorecard tr.hcp td {
+    border-top: 2px solid black;
+}
+

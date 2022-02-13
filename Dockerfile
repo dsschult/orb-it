@@ -10,6 +10,6 @@ RUN adduser app
 USER app
 WORKDIR /home/app
 
-COPY --chown=app:app . .
+COPY --chown=app:app orbit orbit
 
-CMD [ "python", "server.py" ]
+CMD [ "python", "-m", "orbit" ]

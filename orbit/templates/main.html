@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Orb-It Golf League</title>
+<meta name="desciption" content="Orb-It Golf League">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="shortcut icon" href="/static/favicon.png">
+<link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
+<link rel="stylesheet" href="/static/boilerplate.css?v=7.3.0">
+<link rel="stylesheet" href="/static/main.css">
+</head>
+<body>
+<!--[if IE]>
+<p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
+<![endif]-->
+<div id="page-container">
+<header>
+  <h1><a href="/" rel="home">Orb-It Golf League</a></h1>
+</header>
+<nav id="nav">
+  <ol>
+    <li is="navpage" v-for="page in routes" :key="page.path" :path="page.path" :name="page.name" :current="current"></li>
+  </ol>
+</nav>
+<main>
+  <router-view></router-view>
+</main>
+<footer>
+  <p class="copyright">© Orb-It Golf League</p>
+</footer>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script>
+<script src="https://unpkg.com/vue-router@3.1.6/dist/vue-router.js"></script>
+<script src="https://unpkg.com/vue-async-computed@3.8.1"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="/static/boilerplate.js"></script>
+<script src="/static/main.js"></script>
+<script>
+var ws = new WebSocket("{{ websocket_address }}/websocket");
+ws.onopen = function() {
+  console.log("WS opened")
+  ws.send(JSON.stringify({fn: "get_players"}));
+  ws.send(JSON.stringify({fn: "get_seasons"}));
+  ws.send(JSON.stringify({fn: "get_course_list"}));
+}
+ws.onerror = function(event) {
+  console.log("WS error:", event)
+}
+ws.onclose = function() {
+  console.log("WS closed!")
+}
+var global_data = {
+  send_msg: function(data) {
+    if (ws.readyState === 0) {
+      console.log("WS not ready, sleeping")
+      const fn = function() {
+        global_data.send_msg(data)
+      }
+      setTimeout(fn, 200);
+      return
+    }
+    console.log("WS send_msg: ", data)
+    const msg = JSON.stringify(data)
+    ws.send(msg)
+  },
+  players: {},
+  seasons: [],
+  rounds: {},
+  current_round: {},
+  courses: {}
+}
+
+ws.onmessage = function (evt) {
+  console.log("WS recv message: "+evt.data);
+  const data = JSON.parse(evt.data);
+  if (data.fn == 'get_seasons') {
+    global_data.seasons = data.data
+  }
+  else if (data.fn == 'get_rounds') {
+    global_data.rounds = data.data
+  }
+  else if (data.fn == 'get_course_list') {
+    for (const c of data.data) {
+      if (! (c in global_data.courses)) {
+        console.log('add course '+c)
+        global_data.courses[c] = []
+      }
+    }
+  }
+  else if (data.fn == 'get_course_details') {
+    console.log('add course details '+data.course)
+    let courses = Object.assign({}, global_data.courses)
+    courses[data.course] = data.data
+    console.log(courses)
+    global_data.courses = courses
+  }
+  else if (data.fn == 'get_players') {
+    global_data.players = data.data
+  }
+}
+vue_startup(global_data)
+</script>
+</body>
+</html>
