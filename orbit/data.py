@@ -2,6 +2,8 @@ import logging
 import os
 from uuid import uuid4
 import yaml
+from pymongo import ReturnDocument
+
 
 def gen_uuid():
     return str(uuid4())
@@ -105,9 +107,35 @@ class ScoreCard(_Base):
             ret[row['uuid']] = row
         return ret
 
+    async def update_round_add_player(self, uuid, player_uuid, player_hcp):
+        round = await self.db.rounds.find_one({'uuid': uuid})
+        round_details = await self.get_course_details(round['course'])
+
+        field = f'players.{uuid}'
+        update = {
+            '$set': {field: {'hcp': player_hcp, 'strokes': [0 for _ in round_details['holes']]}}
+        }
+        ret = await self.db.rounds.find_one_and_update({'uuid': uuid}, update, return_document=ReturnDocument.AFTER)
+        return {uuid: ret}
+
+    async def update_round_set_strokes(self, uuid, player_uuid, strokes):
+        round = await self.db.rounds.find_one({'uuid': uuid})
+        round_details = await self.get_course_details(round['course'])
+        assert len(strokes) == len(round_details['holes'])
+
+        field = f'players.{uuid}.strokes'
+        update = {
+            '$set': {field: strokes}
+        }
+        ret = await self.db.rounds.find_one_and_update({'uuid': uuid}, update, return_document=ReturnDocument.AFTER)
+        return {uuid: ret}
+
     async def update_round_all(self, uuid, players=None, matchups=None):
+        round = await self.db.rounds.find_one({'uuid': uuid})
+        round_details = await self.get_course_details(round['course'])
         update = {}
         if players:
+            assert len(players['strokes']) == len(round_details['holes'])
             update['players'] = players
         if matchups:
             update['matchups'] = matchups

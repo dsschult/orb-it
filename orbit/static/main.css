@@ -130,9 +130,18 @@ div.selection {
     text-align: right;
     padding-left: 1em;
 }
+.scorecard tr>*:last-child {
+    padding-left: .25em;
+}
+.scorecard td span.hcp {
+    font-size: .8em;
+    float: right;
+}
 .scorecard table {
-  border-spacing: 0;
-  border-collapse: collapse;
+    border-spacing: 0;
+    border-collapse: collapse;
+    border: 1px solid grey;
+    min-width: 42em;
 }
 .scorecard tr>* {
     border: 1px solid grey;
@@ -144,3 +153,41 @@ div.selection {
     border-top: 2px solid black;
 }
 
+.matchups {
+    display: flex;
+    flex-direction: column;
+    margin: 1em 0;
+}
+.scorecard.matchup {
+    border: none;
+}
+.matchup td.win {
+    background-color: #cec;
+}
+.matchup td.tie {
+    background-color: #ffc;
+}
+.matchup td .total_points {
+    min-width: 1.3em;
+    display: inline-block;
+}
+.matchup td.score {
+    padding: 0;
+}
+.matchup td .hcp_dots_wrapper {
+    display: inline-block;
+    position: relative;
+    width: 100%;
+    height: 1.5em;
+    line-height: 1.8em;
+    vertical-align: bottom;
+    overflow: hidden;
+}
+.matchup td .hcp_dots {
+    position: absolute;
+    left: 0;
+    top: -.6rem;
+    width: 100%;
+    text-align: center;
+    font-size: .7em;
+}

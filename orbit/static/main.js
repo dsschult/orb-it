@@ -113,8 +113,12 @@ const Rounds = {
     </select>
   </div>
   <div v-if="round">
-    <scorecard v-if="round_info && course_info.length" :round="round_info"
-      :course_name="course_name" :course="course_info" :data="data"></scorecard>
+    <div v-if="round_info && course_info.length">
+      <scorecard :round="round_info" :course_name="course_name" :course="course_info" :data="data"></scorecard>
+      <div class="matchups">
+        <matchup v-for="match in round_info['matchups']" :round="round_info" :matchup="match" :course="course_info" :data="data"></matchup>
+      </div>
+    </div>
     <div v-else>Loading...</div>
   </div>
   <div v-else>Select season and round</div>
@@ -128,9 +132,6 @@ Vue.component('scorecard', {
     }
   },
   props: ['round', 'course_name', 'course', 'data'],
-  created: function() {
-    console.log('round', this.round, 'course', this.course[0])
-  },
   computed: {
     yardages: function() {
       let ret = {}
@@ -154,13 +155,16 @@ Vue.component('scorecard', {
     players: function() {
       let ret = {}
       for (const p in this.round.players) {
+        const player = this.round.players[p]
         let s = 0
-        for (const v of this.round.players[p]) {
+        for (const v of player.strokes) {
           s += v
         }
+        let hcp = Math.round(player.hcp * this.course.length / 18)
         ret[p] = {
           name: this.data.players[p].name,
-          scores: this.round.players[p],
+          hcp: hcp,
+          strokes: player.strokes,
           total_score: s
         }
       }
@@ -175,6 +179,7 @@ Vue.component('scorecard', {
       <th>Hole</th>
       <th v-for="hole in course">{{ hole.num }}</th>
       <th>Total</th>
+      <th>Tot Hcp</th>
     </tr>
     <tr class="yardage" v-for="(v,name) in yardages">
       <td>{{ name }}</td>
@@ -185,16 +190,317 @@ Vue.component('scorecard', {
       <td>Handicap</td>
       <td v-for="hole in course">{{ hole.hcp }}</th>
       <td></td>
+      <td></td>
     </tr>
     <tr class="par">
       <td>Par</td>
       <td v-for="hole in course">{{ hole.par }}</th>
       <td>{{ total_par }}</td>
+      <td>{{ total_par }}</td>
     </tr>
     <tr class="player" v-for="(v, uuid) in players">
-      <td>{{ v.name }}</td>
-      <td v-for="s in v.scores">{{ s }}</td>
+      <td>{{ v.name }} <span class="hcp">+{{ v.hcp }}</span></td>
+      <td v-for="s in v.strokes">{{ s }}</td>
       <td>{{ v.total_score }}</td>
+      <td>{{ v.total_score - v.hcp }}</td>
+    </tr>
+  </table>
+</div>`
+});
+
+Vue.component('matchup', {
+  data: function(){
+    return {}
+  },
+  props: ['round', 'matchup', 'course', 'data'],
+  computed: {
+    total_par: function() {
+      let ret = 0
+      for (const hole of this.course) {
+        ret += hole.par
+      }
+      return ret
+    },
+    holes_by_hcp: function() {
+      let ret = []
+      let used_holes = {}
+      while (ret.length < this.course.length) {
+        let min_hcp = 100
+        let min_hole = 0
+        for (const hole of this.course) {
+          if (hole.num in used_holes) {
+            continue
+          }
+          if (hole.hcp < min_hcp) {
+            min_hcp = hole.hcp
+            min_hole = hole.num
+          }
+        }
+        used_holes[min_hole] = true
+        ret.push(min_hole-1)
+      }
+      console.log('holes_by_hcp', ret)
+      return ret
+    },
+    match_players: function() {
+      let ret = {}
+      for (const p of this.matchup) {
+        ret[p] = p
+      }
+      return ret
+    },
+    players: function() {
+      let ret = {}
+      for (const p in this.round.players) {
+        if (p in this.match_players) {
+          const player = this.round.players[p]
+          let s = 0
+          for (const v of player.strokes) {
+            s += v
+          }
+          const hcp = Math.round(player.hcp * this.course.length / 18)
+          let strokes_hcp = []
+          let course_hcp = []
+          for (const s of player.strokes) {
+            strokes_hcp.push(s)
+            course_hcp.push(0)
+          }
+          let hcp_count = hcp
+          let index = 0
+          while (hcp_count > 0) {
+            strokes_hcp[this.holes_by_hcp[index]] -= 1
+            course_hcp[this.holes_by_hcp[index]] += 1
+            hcp_count -= 1
+            index += 1
+            if (index == this.course.length) {
+              index = 0
+            }
+          }
+          ret[p] = {
+            name: this.data.players[p].name,
+            hcp: hcp,
+            strokes: player.strokes,
+            strokes_hcp: strokes_hcp,
+            hcp_adjust: course_hcp,
+            total_score: s
+          }
+        }
+      }
+      return ret
+    },
+    players_hcp_adjust_normalized: function() {
+      let min_hcp = 10000
+      for (const uuid in this.players) {
+        const player = this.players[uuid]
+        if (player.hcp < min_hcp) {
+          min_hcp = player.hcp
+        }
+      }
+      let ret = {}
+      for (const uuid in this.players) {
+        const player = this.players[uuid]
+        let course_hcp = []
+        for (const hole of this.course) {
+          course_hcp.push(0)
+        }
+        let hcp_count = player.hcp - min_hcp
+        let index = 0
+        while (hcp_count > 0) {
+          course_hcp[this.holes_by_hcp[index]] += 1
+          hcp_count -= 1
+          index += 1
+          if (index == this.course.length) {
+            index = 0
+          }
+        }
+        ret[uuid] = {
+          'by_hole': course_hcp,
+          'total': player.hcp - min_hcp
+        }
+      }
+      /*
+      let min_hcps = []
+      for (const hole of this.course) {
+        let min_hcp = 10000
+        for (const uuid in this.players) {
+          const player = this.players[uuid];
+          if (player.hcp_adjust[hole.num-1] < min_hcp) {
+            min_hcp = player.hcp_adjust[hole.num-1]
+          }
+        }
+        min_hcps.push(min_hcp)
+      }
+      console.log('min_hcps: ', min_hcps)
+      let ret = {}
+      for (const uuid in this.players) {
+        const player = this.players[uuid];
+        let hcp_adjust = []
+        for (const hole of this.course) {
+          hcp_adjust.push(player.hcp_adjust[hole.num-1] - min_hcps[hole.num-1])
+        }
+        ret[uuid] = {
+          'by_hole': hcp_adjust,
+          'total': hcp_adjust.reduce((s, a) => s + a, 0)
+        }
+      }*/
+      console.log('players_hcp_adjust_normalized: ', ret)
+      return ret
+    },
+    hole_winner: function() {
+      let ret = []
+      for (const hole of this.course) {
+        const index = hole.num-1
+        let scores = {}
+        for (const uuid in this.players) {
+          const player = this.players[uuid]
+          const s_wo_hcp = player.strokes[index]
+          const s = player.strokes_hcp[index]
+          console.log('hole_winner '+(index+1), player.name, s_wo_hcp, s)
+          if (s_wo_hcp == 0) { // don't count holes not played
+            continue
+          }
+          if (!(s in scores)) {
+            scores[s] = [uuid]
+          } else {
+            scores[s].push(uuid)
+          }
+        }
+        const sorted_scores = Object.keys(scores).sort(function(a,b){ return a-b })
+        console.log('hole_winner sorted_scores', sorted_scores)
+        if (sorted_scores.length == 0) {
+          ret.push(null)
+        } else {
+          const players = scores[sorted_scores[0]]
+          ret.push(players)
+        }
+      }
+      console.log('victor():', ret)
+      return ret
+    },
+    hole_points: function() {
+      let total_points = {}
+      for (const players of this.hole_winner) {
+        if (players == null) {
+          return null
+        }
+        const pts = players.length > 1 ? 0.5 : 1.;
+        console.log('hole_points players', players, pts)
+        for (const uuid of players) {
+          if (uuid in total_points) {
+            total_points[uuid] += pts
+          } else {
+            total_points[uuid] = pts
+          }
+        }
+      }
+      console.log('hole_points:', total_points)
+      return total_points
+    },
+    low_net: function() {
+      for (const players of this.hole_winner) {
+        if (players == null) {
+          return {}
+        }
+      }
+      let low_net = 10000
+      let low_net_players = {}
+      for (const uuid in this.players) {
+        const v = this.players[uuid]
+        const net = v.total_score - v.hcp
+        if (net < low_net) {
+          low_net = net
+          low_net_players = {}
+          low_net_players[uuid] = uuid
+        } else if (net == low_net) {
+          low_net_players[uuid] = uuid
+        }
+      }
+      console.log('low_net:', low_net_players)
+      return low_net_players
+    },
+    total_points: function() {
+      let ret = {}
+      for (const uuid in this.hole_points) {
+        let pts = this.hole_points[uuid]
+        if (uuid in this.low_net) {
+          pts += 4/Object.keys(this.low_net).length
+        }
+        ret[uuid] = pts
+      }
+      console.log('total_points:', ret)
+      return ret
+    }
+  },
+  methods: {
+    hole_class: function(player, hole) {
+      const v = this.hole_winner[hole]
+      console.log('hole_class('+player+', '+hole+'): ', v)
+      if (v == null) {
+        return ''
+      } else if (v.length == 1 && v[0] == player) {
+        return 'win'
+      }
+      for (const p of v) {
+        if (p == player) {
+          return 'tie'
+        }
+      }
+      return ''
+    },
+    net_class: function(player) {
+      if (player in this.low_net) {
+        if (Object.keys(this.low_net).length > 1) {
+          return 'tie'
+        }
+        return 'win'
+      }
+      return ''
+    },
+    total_class: function(player) {
+      const pts = this.total_points[player]
+      if (pts == 6.5) {
+        return 'tie'
+      } else if (pts > 6.5) {
+        return 'win'
+      }
+      return ''
+    },
+    dot: function(player, hole) {
+      const num = this.players_hcp_adjust_normalized[player].by_hole[hole]
+      return '•'.repeat(num)
+    },
+    hcp_normalized: function(player) {
+      const hcp = this.players_hcp_adjust_normalized[player].total
+      if (hcp > 0) {
+        return '+'+hcp
+      }
+      return ''
+    }
+  },
+  template: `
+<div class="scorecard matchup">
+  <h3>Matchup: {{ players[matchup[0]].name }} vs {{ players[matchup[1]].name }}</h3>
+  <table>
+    <tr class="hole">
+      <th>Hole</th>
+      <th v-for="hole in course">{{ hole.num }}</th>
+      <th>Total</th>
+      <th>Tot Hcp</th>
+      <th>Points</th>
+    </tr>
+    <tr class="par">
+      <td>Par</td>
+      <td v-for="hole in course">{{ hole.par }}</th>
+      <td>{{ total_par }}</td>
+      <td>{{ total_par }}</td>
+      <td></td>
+    </tr>
+    <tr class="player" v-for="(v, uuid) in players">
+      <td>{{ v.name }} <span class="hcp">{{ hcp_normalized(uuid) }}</span></td>
+      <td v-for="hole in course" class="score" :class="hole_class(uuid, hole.num-1)"><div class="hcp_dots_wrapper">{{ v.strokes[hole.num-1] }}<span class="hcp_dots">{{ dot(uuid, hole.num-1) }}</span></div></td>
+      <td>{{ v.total_score }}</td>
+      <td :class="net_class(uuid)">{{ v.total_score - v.hcp }}</td>
+      <td :class="total_class(uuid)">{{ hole_points[uuid] }}<span v-if="net_class(uuid) == 'win'"> + 4</span><span v-else-if="net_class(uuid) == 'tie'"> + 2</span> = <span class="total_points">{{ total_points[uuid] }}</span></td>
     </tr>
   </table>
 </div>`
