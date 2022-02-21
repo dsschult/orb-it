@@ -44,12 +44,12 @@ def basic_auth(method):
     async def wrapper(self, *args, **kwargs):
         if not self.current_user:
             header = self.request.headers.get('Authorization')
-            if header is None or not header.lower().startswith('basic '):
-                self.set_header('WWW-Authenticate', 'Basic realm=Orb-It')
-                self.set_status(401)
-                self.finish()
-                return
-            raise tornado.web.HTTPError(403, reason="authentication failed")
+            if header is not None and header.lower().startswith('basic '):
+                await asyncio.sleep(1) # slow down guessing attacks
+            self.set_header('WWW-Authenticate', 'Basic realm=Orb-It')
+            self.set_status(401)
+            self.finish()
+            return
         return await method(self, *args, **kwargs)
     return wrapper
 
