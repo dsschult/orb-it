@@ -9,10 +9,12 @@ spec:
   selector:
     matchLabels:
       app: orbit
+      component: web
   template:
     metadata:
       labels:
         app: orbit
+        component: web
     spec:
       securityContext:
         runAsNonRoot: true
@@ -23,6 +25,13 @@ spec:
         env:
         - name: PORT
           value: "8080"
+        - name: WEBSOCKET_ADDRESS
+          value: "wss://orb-it.dsschult.com"
+        - name: MONGODB_URL
+          valueFrom:
+            secretKeyRef:
+              name: orbit-secrets
+              key: mongo_url
         ports:
         - containerPort: 8080
         securityContext:

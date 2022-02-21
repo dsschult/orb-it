@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orbit-mongo
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: orbit
+      component: mongo
+  template:
+    metadata:
+      labels:
+        app: orbit
+        component: mongo
+    spec:
+      containers:
+      - name: orbit-mongo
+        image: bitnami/mongodb:4.2
+        env:
+        - name: MONGODB_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: orbit-secrets
+              key: mongo_password
+        volumeMounts:
+        - name: mongo-storage
+          mountPath: /bitnami/mongodb
+        resources:
+          requests:
+            cpu: 100m
+            memory: 200Mi
+          limits:
+            cpu: 200m
+            memory: 300Mi
+        ports:
+        - containerPort: 27017
+          protocol: TCP
+      volumes:
+      - name: mongo-storage
+        hostPath:
+          path: /data/orbit-mongo
