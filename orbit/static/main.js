@@ -54,12 +54,27 @@ const Rounds = {
       this.fetchData()
     },
     watch: {
-      '$route': 'fetchData'
+      '$route': 'fetchData',
+      'season': 'updateHistory',
+      'round': 'updateHistory',
     },
     methods: {
       fetchData: function() {
         console.log('fetchData()')
         this.data.send_msg({fn: 'get_rounds'})
+        if (this.$route.query.season) {
+          this.season = this.$route.query.season
+        }
+        if (this.$route.query.round) {
+          this.round = this.$route.query.round
+        }
+      },
+      updateHistory() {
+        if (this.season && this.round) {
+          if (this.$route.query.season != this.season || this.$route.query.round != this.round) {
+            this.$router.push({ path: '/rounds', query: { season: this.season, round: this.round } })
+          }
+        }
       }
     },
     computed: {
