@@ -171,8 +171,39 @@ Vue.component('scorecard', {
       return ret
     }
   },
+  watch: {
+    player: function(newVal, oldVal) {
+      console.log('player updated', newVal)
+    }
+  },
+  methods: {
+    stroke: function(event) {
+      const player = event.target.attributes.player.value
+      const holenum = parseInt(event.target.attributes.hole.value)
+      const val = event.target.valueAsNumber
+      let strokes = []
+      for (const hole of this.course) {
+        if (hole.num == holenum) {
+          strokes.push(val)
+        } else {
+          strokes.push(this.players[player].strokes[hole.num-1])
+        }
+      }
+      console.log('player takes stroke', player, holenum, val, strokes)
+      this.data.send_msg({
+        fn: 'update_round_set_strokes',
+        round: this.round.uuid,
+        player: player,
+        strokes: strokes
+      })
+    },
+    edit_button: function(event) {
+      this.edit = !this.edit
+    }
+  },
   template: `
 <div class="scorecard">
+  <div class="edit"><button v-on:click="edit_button">{{ edit ? "View" : "Edit"}} Mode</button></div>
   <h3>{{ course_name }}</h3>
   <table>
     <tr class="hole">
@@ -200,7 +231,7 @@ Vue.component('scorecard', {
     </tr>
     <tr class="player" v-for="(v, uuid) in players">
       <td>{{ v.name }} <span class="hcp">+{{ v.hcp }}</span></td>
-      <td v-for="s in v.strokes">{{ s }}</td>
+      <td v-for="hole in course"><input v-if="edit" type="number" :player="uuid" :hole="hole.num" :value="v.strokes[hole.num-1]" v-on:change="stroke" /><span v-else>{{ v.strokes[hole.num-1] }}</span></td>
       <td>{{ v.total_score }}</td>
       <td>{{ v.total_score - v.hcp }}</td>
     </tr>
@@ -318,31 +349,6 @@ Vue.component('matchup', {
           'total': player.hcp - min_hcp
         }
       }
-      /*
-      let min_hcps = []
-      for (const hole of this.course) {
-        let min_hcp = 10000
-        for (const uuid in this.players) {
-          const player = this.players[uuid];
-          if (player.hcp_adjust[hole.num-1] < min_hcp) {
-            min_hcp = player.hcp_adjust[hole.num-1]
-          }
-        }
-        min_hcps.push(min_hcp)
-      }
-      console.log('min_hcps: ', min_hcps)
-      let ret = {}
-      for (const uuid in this.players) {
-        const player = this.players[uuid];
-        let hcp_adjust = []
-        for (const hole of this.course) {
-          hcp_adjust.push(player.hcp_adjust[hole.num-1] - min_hcps[hole.num-1])
-        }
-        ret[uuid] = {
-          'by_hole': hcp_adjust,
-          'total': hcp_adjust.reduce((s, a) => s + a, 0)
-        }
-      }*/
       console.log('players_hcp_adjust_normalized: ', ret)
       return ret
     },
@@ -354,10 +360,13 @@ Vue.component('matchup', {
         for (const uuid in this.players) {
           const player = this.players[uuid]
           const s_wo_hcp = player.strokes[index]
-          const s = player.strokes_hcp[index]
+          const hcp = this.players_hcp_adjust_normalized[uuid].by_hole[index]
+          const s = s_wo_hcp - hcp
+          //const s = player.strokes_hcp[index]
           console.log('hole_winner '+(index+1), player.name, s_wo_hcp, s)
           if (s_wo_hcp == 0) { // don't count holes not played
-            continue
+            scores = {}
+            break
           }
           if (!(s in scores)) {
             scores[s] = [uuid]
@@ -381,7 +390,7 @@ Vue.component('matchup', {
       let total_points = {}
       for (const players of this.hole_winner) {
         if (players == null) {
-          return null
+          return {}
         }
         const pts = players.length > 1 ? 0.5 : 1.;
         console.log('hole_points players', players, pts)
@@ -419,6 +428,11 @@ Vue.component('matchup', {
       return low_net_players
     },
     total_points: function() {
+      for (const players of this.hole_winner) {
+        if (players == null) {
+          return {}
+        }
+      }
       let ret = {}
       for (const uuid in this.hole_points) {
         let pts = this.hole_points[uuid]
@@ -500,7 +514,7 @@ Vue.component('matchup', {
       <td v-for="hole in course" class="score" :class="hole_class(uuid, hole.num-1)"><div class="hcp_dots_wrapper">{{ v.strokes[hole.num-1] }}<span class="hcp_dots">{{ dot(uuid, hole.num-1) }}</span></div></td>
       <td>{{ v.total_score }}</td>
       <td :class="net_class(uuid)">{{ v.total_score - v.hcp }}</td>
-      <td :class="total_class(uuid)">{{ hole_points[uuid] }}<span v-if="net_class(uuid) == 'win'"> + 4</span><span v-else-if="net_class(uuid) == 'tie'"> + 2</span> = <span class="total_points">{{ total_points[uuid] }}</span></td>
+      <td :class="total_class(uuid)" v-if="uuid in hole_points">{{ hole_points[uuid] }}<span v-if="net_class(uuid) == 'win'"> + 4</span><span v-else-if="net_class(uuid) == 'tie'"> + 2</span> = <span class="total_points">{{ total_points[uuid] }}</span></td>
     </tr>
   </table>
 </div>`

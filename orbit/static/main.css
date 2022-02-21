@@ -61,6 +61,7 @@ nav li.active {
 #page-container {
     position: relative;
     min-height: 100vh;
+    min-width: 45em;
 }
 footer {
     align-items: center;
@@ -118,10 +119,15 @@ div.selection {
     margin-bottom: 1em;
 }
 
+
 .scorecard {
     border: 1px solid black;
     padding: 1em;
     display: inline-block;
+}
+.scorecard .edit {
+  float: right;
+  padding: 1em 0 0;
 }
 .scorecard tr td:first-child, .scorecard tr th:first-child {
     text-align: left;
@@ -151,6 +157,9 @@ div.selection {
 }
 .scorecard tr.hcp td {
     border-top: 2px solid black;
+}
+.scorecard td input {
+    width: 3em;
 }
 
 .matchups {

@@ -49,7 +49,7 @@ def basic_auth(method):
                 self.set_status(401)
                 self.finish()
                 return
-            raise HTTPError(403, reason="authentication failed")
+            raise tornado.web.HTTPError(403, reason="authentication failed")
         return await method(self, *args, **kwargs)
     return wrapper
 
@@ -221,11 +221,21 @@ class LiveScores:
                 'fn': 'new_round',
                 'data': ret,
             }
+        elif data['fn'] == 'update_round_set_strokes':
+            assert 'round' in data
+            assert 'player' in data
+            assert 'strokes' in data
+            ret = await self.scorecards.update_round_set_strokes(data['round'], data['player'], data['strokes'])
+            logging.info(f'ret = {ret}')
+            update_all = {
+                'fn': 'update_rounds',
+                'data': ret,
+            }
 
         if update:
             writer(tornado.escape.json_encode(update))
         elif update_all:
-            self.send_all(tornado.escape.json_encode(update))
+            self.send_all(tornado.escape.json_encode(update_all))
 
 def getconf():
     port = int(os.environ.get('PORT', '80'))

@@ -80,6 +80,13 @@ ws.onmessage = function (evt) {
   else if (data.fn == 'get_rounds') {
     global_data.rounds = data.data
   }
+  else if (data.fn == 'update_rounds') {
+    for (const uuid in data.data) {
+      global_data.rounds[uuid] = data.data[uuid]
+    }
+    //let rounds = Object.assign(data.data, global_data.rounds)
+    //global_data.rounds = rounds
+  }
   else if (data.fn == 'get_course_list') {
     for (const c of data.data) {
       if (! (c in global_data.courses)) {
