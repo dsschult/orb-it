@@ -37,19 +37,29 @@
 <script src="/static/boilerplate.js"></script>
 <script src="/static/main.js"></script>
 <script>
-var ws = new WebSocket("{{ websocket_address }}/websocket");
-ws.onopen = function() {
-  console.log("WS opened")
-  ws.send(JSON.stringify({fn: "get_players"}));
-  ws.send(JSON.stringify({fn: "get_seasons"}));
-  ws.send(JSON.stringify({fn: "get_course_list"}));
+var ws = null
+let start = function(){
+  try {
+    ws = new WebSocket("{{ websocket_address }}/websocket");
+    ws.onopen = function() {
+      console.log("WS opened")
+      ws.send(JSON.stringify({fn: "get_players"}));
+      ws.send(JSON.stringify({fn: "get_seasons"}));
+      ws.send(JSON.stringify({fn: "get_course_list"}));
+    }
+    ws.onerror = function(event) {
+      console.log("WS error:", event)
+    }
+    ws.onclose = function() {
+      console.log("WS closed!")
+      setTimeout(function(){start()}, 5000);
+    }
+  } catch (e) {
+    console.error('error opening websocket', e)
+    setTimeout(function(){start()}, 5000);
+  }
 }
-ws.onerror = function(event) {
-  console.log("WS error:", event)
-}
-ws.onclose = function() {
-  console.log("WS closed!")
-}
+start()
 var global_data = {
   send_msg: function(data) {
     if (ws.readyState === 0) {
