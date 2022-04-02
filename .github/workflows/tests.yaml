@@ -1,0 +1,26 @@
+name: Run cypress tests
+on: [push]
+jobs:
+  test:
+    name: Cypress Tests
+    runs-on: ubuntu-latest
+    services:
+      mongo:
+        image: mongo:4.0
+        ports:
+          - 27017:27017
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v2
+      - name: Setup Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.8'
+      - name: Setup Dependencies
+        run: |
+          ./setupenv.sh
+      - name: Run Tests
+        run: |
+          . env/bin/activate
+          python -m orbit &
+          docker run --network=host -it -v $PWD:/e2e -w /e2e cypress/included:9.5.3
