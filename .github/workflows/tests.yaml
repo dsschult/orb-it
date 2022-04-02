@@ -25,4 +25,4 @@ jobs:
       - name: Run Tests
         run: |
           python -m orbit &
-          docker run --network=host -it -v $PWD:/e2e -w /e2e cypress/included:9.5.3
+          docker run --network=host -v $PWD:/e2e -w /e2e cypress/included:9.5.3
