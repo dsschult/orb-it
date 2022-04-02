@@ -9,6 +9,8 @@ jobs:
         image: mongo:4.0
         ports:
           - 27017:27017
+    env:
+      PORT: "8080"
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
