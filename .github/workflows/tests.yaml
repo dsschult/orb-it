@@ -18,9 +18,9 @@ jobs:
           python-version: '3.8'
       - name: Setup Dependencies
         run: |
-          ./setupenv.sh
+          pip install --upgrade pip
+          pip install -r requirements.txt
       - name: Run Tests
         run: |
-          . env/bin/activate
           python -m orbit &
           docker run --network=host -it -v $PWD:/e2e -w /e2e cypress/included:9.5.3
