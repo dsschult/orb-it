@@ -118,11 +118,11 @@ const Rounds = {
     template: `
 <article class="rounds">
   <div class="selection">
-    <select v-model="season">
+    <select v-model="season" data-test="select-season">
       <option disabled value="">Select a season</option>
       <option v-for="s in seasons">{{ s }}<option>
     </select>
-    <select v-model="round">
+    <select v-model="round" data-test="select-round">
       <option disabled value="">Select a round</option>
       <option v-for="(r,uuid) in rounds" v-bind:value="uuid">{{ r }}<option>
     </select>
@@ -136,7 +136,179 @@ const Rounds = {
     </div>
     <div v-else>Loading...</div>
   </div>
-  <div v-else>Select season and round</div>
+  <div v-else data-test="select-season-round">Select season and round</div>
+</article>`
+}
+
+const Seasons = {
+    data: function(){
+      return {
+        'season': '',
+        'newdate': ''
+      }
+    },
+    props: ['data'],
+    created: function() {
+      this.fetchData()
+    },
+    watch: {
+      '$route': 'fetchData',
+      'season': 'updateHistory',
+      'seasons': 'seasonsIsUpdated',
+    },
+    methods: {
+      fetchData: function() {
+        console.log('fetchData()')
+        this.data.send_msg({fn: 'get_rounds'})
+        if (this.$route.query.season) {
+          this.season = this.$route.query.season
+        }
+      },
+      seasonsIsUpdated: function() {
+        if (!(this.season)) {
+          for (const s of this.seasons) {
+            this.season = s
+            break
+          }
+        }
+      },
+      updateHistory() {
+        if (this.season) {
+          if (this.$route.query.season != this.season) {
+            this.$router.push({ path: '/seasons', query: { season: this.season } })
+          }
+        }
+      },
+      newRound() {
+        if (this.newdate) {
+          this.data.send_msg({fn: 'new_round', season: this.season, date: this.newdate, course: 'Default'})
+        }
+      },
+      get_points(round, player_uuid) {
+        let ret = '---'
+        if (player_uuid in round.players) {
+          const player_round = round.players[player_uuid]
+          if ('points' in player_round) {
+            const pts = player_round.points
+            ret = pts.match + ' + ' + pts.net
+          }
+        }
+        return ret
+      }
+    },
+    computed: {
+      seasons: function() {
+        return this.data.seasons;
+      },
+      rounds: function() {
+        let ret = {}
+        for (const uuid in this.data.rounds) {
+          const round = this.data.rounds[uuid]
+          if (round.season == this.season) {
+            ret[uuid] = round
+          }
+        }
+        return ret
+      },
+      players: function() {
+        let ret = {}
+        for (const uuid in this.rounds) {
+          for (const player_uuid in this.rounds[uuid].players) {
+            if (!(player_uuid in ret)) {
+              ret[player_uuid] = this.data.players[player_uuid]
+            }
+          }
+        }
+        return ret
+      },
+      player_scores: function() {
+        let scores = {}
+        for (const player_uuid in this.players) {
+          let match = 0
+          let net = 0
+          for (const uuid in this.rounds) {
+            const round = this.rounds[uuid]
+            if (player_uuid in round.players) {
+              const player_round = round.players[player_uuid]
+              if ('points' in player_round) {
+                const pts = player_round.points
+                match += pts.match
+                net += pts.net
+              }
+            }
+          }
+          scores[player_uuid] = {
+            total: match + net,
+            match: match,
+            net: net
+          }
+        }
+        console.log('player_scores', scores)
+        return scores
+      },
+      player_ordering: function() {
+        const scores = this.player_scores
+        return Object.keys(scores).sort(function(a,b){
+          let ret = scores[b].total-scores[a].total
+          if (ret == 0) {
+            ret = scores[b].match-scores[a].match
+          }
+          return ret
+        })
+      }
+    },
+    template: `
+<article class="seasons">
+  <div class="selection">
+    <select v-model="season" data-test="select-season">
+      <option disabled value="">Select a season</option>
+      <option v-for="s in seasons" >{{ s }}</option>
+    </select>
+  </div>
+  <div v-if="season">
+    <div class="round_cols" data-test="season">
+      <div class="col">
+        <div class="cell header"></div>
+        <div class="cell" v-for="player_uuid in player_ordering" data-test="player-name">{{ players[player_uuid].name }}</div>
+      </div>
+      <div class="col" v-for="round, uuid in rounds" :data-test="round.date">
+        <div class="cell header">
+          <router-link :to="{ name: 'rounds', query: { season: season, round: uuid }}">
+            <span class="name">{{ round.name }}</span>
+            <span class="date">{{ round.date.split('T')[0] }}</span>
+          </router-link>
+        </div>
+        <div class="cell" v-for="player_uuid in player_ordering">
+          {{ get_points(round, player_uuid) }}
+        </div>
+      </div>
+      <div class="col match">
+        <div class="cell header">Match</div>
+        <div class="cell" v-for="player_uuid in player_ordering">
+          {{ player_scores[player_uuid].match }}
+        </div>
+      </div>
+      <div class="col net">
+        <div class="cell header">Net</div>
+        <div class="cell" v-for="player_uuid in player_ordering">
+          {{ player_scores[player_uuid].net }}
+        </div>
+      </div>
+      <div class="col total">
+        <div class="cell header">Total Points</div>
+        <div class="cell" v-for="player_uuid in player_ordering">
+          {{ player_scores[player_uuid].total }}
+        </div>
+      </div>
+    </div>
+    <div class="new_round">
+      <h4>New Round</h4>
+      <select>
+        <option>course</option>
+      </select>
+    </div>
+  </div>
+  <div v-else>Select season</div>
 </article>`
 }
 
@@ -154,8 +326,20 @@ Vue.component('scorecard', {
         for (const color in hole.yardages) {
           if (!(color in ret)) {
             ret[color] = hole.yardages[color]
+          } else {
+            ret[color] += hole.yardages[color]
           }
-          ret[color] += hole.yardages[color]
+        }
+      }
+      return ret
+    },
+    short_hcp: function() {
+      let ret = []
+      for (const hole of this.course) {
+        if ('short_hcp' in hole) {
+          ret.push(hole['short_hcp'])
+        } else {
+          return false
         }
       }
       return ret
@@ -179,6 +363,7 @@ Vue.component('scorecard', {
         ret[p] = {
           name: this.data.players[p].name,
           hcp: hcp,
+          tee: this.data.players[p].tee,
           strokes: player.strokes,
           total_score: s
         }
@@ -217,7 +402,7 @@ Vue.component('scorecard', {
     }
   },
   template: `
-<div class="scorecard">
+<div class="scorecard" data-test="scorecard">
   <div class="edit"><button v-on:click="edit_button">{{ edit ? "View" : "Edit"}} Mode</button></div>
   <h3>{{ course_name }}</h3>
   <table>
@@ -225,7 +410,7 @@ Vue.component('scorecard', {
       <th>Hole</th>
       <th v-for="hole in course">{{ hole.num }}</th>
       <th>Total</th>
-      <th>Tot Hcp</th>
+      <th>Net</th>
     </tr>
     <tr class="yardage" v-for="(v,name) in yardages">
       <td>{{ name }}</td>
@@ -238,13 +423,19 @@ Vue.component('scorecard', {
       <td></td>
       <td></td>
     </tr>
+    <tr v-if="short_hcp" class="short_hcp">
+      <td>Forward Hcp</td>
+      <td v-for="h in short_hcp">{{ h }}</th>
+      <td></td>
+      <td></td>
+    </tr>
     <tr class="par">
       <td>Par</td>
       <td v-for="hole in course">{{ hole.par }}</th>
       <td>{{ total_par }}</td>
       <td>{{ total_par }}</td>
     </tr>
-    <tr class="player" v-for="(v, uuid) in players">
+    <tr class="player" v-for="(v, uuid) in players" :data-test="v.name">
       <td>{{ v.name }} <span class="hcp">+{{ v.hcp }}</span></td>
       <td v-for="hole in course"><input v-if="edit" type="number" :player="uuid" :hole="hole.num" :value="v.strokes[hole.num-1]" v-on:change="stroke" /><span v-else>{{ v.strokes[hole.num-1] }}</span></td>
       <td>{{ v.total_score }}</td>
@@ -267,24 +458,29 @@ Vue.component('matchup', {
       }
       return ret
     },
-    holes_by_hcp: function() {
-      let ret = []
-      let used_holes = {}
-      while (ret.length < this.course.length) {
-        let min_hcp = 100
-        let min_hole = 0
-        for (const hole of this.course) {
-          if (hole.num in used_holes) {
-            continue
-          }
-          if (hole.hcp < min_hcp) {
-            min_hcp = hole.hcp
-            min_hole = hole.num
-          }
+    tee: function() {
+      let ret = 'std'
+      for (const uuid of this.matchup) {
+        const player_tee = this.data.players[uuid].tee
+        if (player_tee == 'short') {
+          ret = 'short'
+          break
         }
-        used_holes[min_hole] = true
-        ret.push(min_hole-1)
       }
+      console.log('match tee: '+ret)
+      return ret
+    },
+    holes_by_hcp: function() {
+      const hcp_key = this.tee == 'short' ? 'short_hcp' : 'hcp'
+      let ret = []
+      for (const hole of this.course) {
+        ret.push(hole.num)
+      }
+      ret.sort((a,b) => {
+        const a_hcp = this.course[a-1][hcp_key]
+        const b_hcp = this.course[b-1][hcp_key]
+        return a_hcp-b_hcp
+      })
       console.log('holes_by_hcp', ret)
       return ret
     },
@@ -305,36 +501,17 @@ Vue.component('matchup', {
             s += v
           }
           const hcp = Math.round(player.hcp * this.course.length / 18)
-          let strokes_hcp = []
-          let course_hcp = []
-          for (const s of player.strokes) {
-            strokes_hcp.push(s)
-            course_hcp.push(0)
-          }
-          let hcp_count = hcp
-          let index = 0
-          while (hcp_count > 0) {
-            strokes_hcp[this.holes_by_hcp[index]] -= 1
-            course_hcp[this.holes_by_hcp[index]] += 1
-            hcp_count -= 1
-            index += 1
-            if (index == this.course.length) {
-              index = 0
-            }
-          }
           ret[p] = {
             name: this.data.players[p].name,
             hcp: hcp,
             strokes: player.strokes,
-            strokes_hcp: strokes_hcp,
-            hcp_adjust: course_hcp,
             total_score: s
           }
         }
       }
       return ret
     },
-    players_hcp_adjust_normalized: function() {
+    min_hcp: function() {
       let min_hcp = 10000
       for (const uuid in this.players) {
         const player = this.players[uuid]
@@ -342,72 +519,95 @@ Vue.component('matchup', {
           min_hcp = player.hcp
         }
       }
-      let ret = {}
+      console.log('min_hcp: ', min_hcp)
+      return min_hcp
+    },
+    adjusted_hcps: function() {
+      ret = {}
       for (const uuid in this.players) {
         const player = this.players[uuid]
-        let course_hcp = []
-        for (const hole of this.course) {
-          course_hcp.push(0)
-        }
-        let hcp_count = player.hcp - min_hcp
-        let index = 0
-        while (hcp_count > 0) {
-          course_hcp[this.holes_by_hcp[index]] += 1
-          hcp_count -= 1
-          index += 1
-          if (index == this.course.length) {
-            index = 0
-          }
-        }
-        ret[uuid] = {
-          'by_hole': course_hcp,
-          'total': player.hcp - min_hcp
-        }
+        ret[uuid] = player.hcp - this.min_hcp
       }
-      console.log('players_hcp_adjust_normalized: ', ret)
+      console.log('adjusted_hcps:', ret)
       return ret
     },
-    hole_winner: function() {
-      let ret = []
-      for (const hole of this.course) {
-        const index = hole.num-1
-        let scores = {}
-        for (const uuid in this.players) {
-          const player = this.players[uuid]
-          const s_wo_hcp = player.strokes[index]
-          const hcp = this.players_hcp_adjust_normalized[uuid].by_hole[index]
-          const s = s_wo_hcp - hcp
-          //const s = player.strokes_hcp[index]
-          console.log('hole_winner '+(index+1), player.name, s_wo_hcp, s)
-          if (s_wo_hcp == 0) { // don't count holes not played
-            scores = {}
-            break
-          }
-          if (!(s in scores)) {
-            scores[s] = [uuid]
-          } else {
-            scores[s].push(uuid)
+    adjusted_hcp_strokes: function() {
+      let hcps = Object.assign({}, this.adjusted_hcps)
+      let strokes = {}
+      let dots = {}
+      for (const uuid in this.players) {
+        strokes[uuid] = [...this.players[uuid].strokes]
+        dots[uuid] = new Array(strokes[uuid].length).fill(0)
+      }
+
+      const sorted_holes = this.holes_by_hcp
+      let sorted_hole_index = 0
+      while (Object.values(hcps).some((e) => e > 0)) {
+        let hole_index = sorted_holes[sorted_hole_index]-1
+        console.log('dot on hole_index', hole_index)
+        for (const uuid in hcps) {
+          console.log('eval', uuid, dots[uuid], hcps[uuid], strokes[uuid])
+          if (hcps[uuid] > 0) {
+            hcps[uuid] -= 1
+            dots[uuid][hole_index] += 1
+            if (strokes[uuid][hole_index] > 1) { // min 1 shot
+              strokes[uuid][hole_index] -= 1
+            }
           }
         }
-        const sorted_scores = Object.keys(scores).sort(function(a,b){ return a-b })
-        console.log('hole_winner sorted_scores', sorted_scores)
-        if (sorted_scores.length == 0) {
-          ret.push(null)
-        } else {
-          const players = scores[sorted_scores[0]]
-          ret.push(players)
+        sorted_hole_index += 1
+        if (sorted_hole_index >= sorted_holes.length) {
+          sorted_hole_index = 0
         }
       }
-      console.log('victor():', ret)
+      for (const uuid in strokes) {
+        ret[uuid] = {
+          'dots': dots[uuid],
+          'by_hole': strokes[uuid],
+          'total': this.players[uuid].hcp - this.min_hcp
+        }
+      }
+      console.log('adjusted_hcp_strokes:', ret)
+      return ret
+    },
+    hole_winners: function() {
+      let ret = []
+      let hcp_strokes = this.adjusted_hcp_strokes
+      for (const hole of this.course) {
+        const index = hole.num-1
+        let all_strokes = []
+        let scores_valid = true;
+        for (const uuid in hcp_strokes) {
+          const s = hcp_strokes[uuid].by_hole[index]
+          if (s <= 0) {
+            scores_valid = false
+            break
+          }
+          all_strokes.push(s)
+        }
+        if (!scores_valid) {
+          ret.push(null)
+        } else {
+          const min_strokes = Math.min(...all_strokes)
+          let hole_winners = []
+          for (const uuid in hcp_strokes) {
+            if (hcp_strokes[uuid].by_hole[index] == min_strokes) {
+              hole_winners.push(uuid)
+            }
+          }
+          ret.push(hole_winners)
+        }
+      }
+      console.log('hole_winners():', ret)
       return ret
     },
     hole_points: function() {
       let total_points = {}
-      for (const players of this.hole_winner) {
+      for (const players of this.hole_winners) {
         if (players == null) {
           return {}
         }
-        const pts = players.length > 1 ? 0.5 : 1.;
+        const pts = 1./players.length;
         console.log('hole_points players', players, pts)
         for (const uuid of players) {
           if (uuid in total_points) {
@@ -421,7 +621,7 @@ Vue.component('matchup', {
       return total_points
     },
     low_net: function() {
-      for (const players of this.hole_winner) {
+      for (const players of this.hole_winners) {
         if (players == null) {
           return {}
         }
@@ -443,7 +643,7 @@ Vue.component('matchup', {
       return low_net_players
     },
     total_points: function() {
-      for (const players of this.hole_winner) {
+      for (const players of this.hole_winners) {
         if (players == null) {
           return {}
         }
@@ -462,7 +662,7 @@ Vue.component('matchup', {
   },
   methods: {
     hole_class: function(player, hole) {
-      const v = this.hole_winner[hole]
+      const v = this.hole_winners[hole]
       console.log('hole_class('+player+', '+hole+'): ', v)
       if (v == null) {
         return ''
@@ -494,12 +694,12 @@ Vue.component('matchup', {
       }
       return ''
     },
-    dot: function(player, hole) {
-      const num = this.players_hcp_adjust_normalized[player].by_hole[hole]
+    dot: function(player_uuid, hole) {
+      const num = this.adjusted_hcp_strokes[player_uuid].dots[hole-1]
       return '•'.repeat(num)
     },
-    hcp_normalized: function(player) {
-      const hcp = this.players_hcp_adjust_normalized[player].total
+    hcp_normalized: function(player_uuid) {
+      const hcp = this.adjusted_hcp_strokes[player_uuid].total
       if (hcp > 0) {
         return '+'+hcp
       }
@@ -507,14 +707,14 @@ Vue.component('matchup', {
     }
   },
   template: `
-<div class="scorecard matchup">
+<div class="scorecard matchup" data-test="matchup">
   <h3>Matchup: {{ players[matchup[0]].name }} vs {{ players[matchup[1]].name }}</h3>
   <table>
     <tr class="hole">
       <th>Hole</th>
       <th v-for="hole in course">{{ hole.num }}</th>
       <th>Total</th>
-      <th>Tot Hcp</th>
+      <th>Net</th>
       <th>Points</th>
     </tr>
     <tr class="par">
@@ -524,9 +724,9 @@ Vue.component('matchup', {
       <td>{{ total_par }}</td>
       <td></td>
     </tr>
-    <tr class="player" v-for="(v, uuid) in players">
+    <tr class="player" v-for="(v, uuid) in players" :data-test="v.name">
       <td>{{ v.name }} <span class="hcp">{{ hcp_normalized(uuid) }}</span></td>
-      <td v-for="hole in course" class="score" :class="hole_class(uuid, hole.num-1)"><div class="hcp_dots_wrapper">{{ v.strokes[hole.num-1] }}<span class="hcp_dots">{{ dot(uuid, hole.num-1) }}</span></div></td>
+      <td v-for="hole in course" class="score" :class="hole_class(uuid, hole.num-1)"><div class="hcp_dots_wrapper">{{ v.strokes[hole.num-1] }}<span class="hcp_dots">{{ dot(uuid, hole.num) }}</span></div></td>
       <td>{{ v.total_score }}</td>
       <td :class="net_class(uuid)">{{ v.total_score - v.hcp }}</td>
       <td :class="total_class(uuid)" v-if="uuid in hole_points">{{ hole_points[uuid] }}<span v-if="net_class(uuid) == 'win'"> + 4</span><span v-else-if="net_class(uuid) == 'tie'"> + 2</span> = <span class="total_points">{{ total_points[uuid] }}</span></td>
@@ -624,6 +824,7 @@ async function vue_startup(data){
   let routes = [
     { path: '/', name: 'home', component: Home, props: { data: data } },
     { path: '/rounds', name: 'rounds', component: Rounds, props: { data: data } },
+    { path: '/seasons', name: 'seasons', component: Seasons, props: { data: data } },
     { path: '*', name: '404', component: Error404, props: true }
   ];
   let available_routes = [];

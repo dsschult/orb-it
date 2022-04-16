@@ -231,6 +231,16 @@ class LiveScores:
                 'fn': 'update_rounds',
                 'data': ret,
             }
+        elif data['fn'] == 'update_round_set_points':
+            assert 'round' in data
+            assert 'player' in data
+            assert 'points' in data
+            ret = await self.scorecards.update_round_set_points(data['round'], data['player'], data['points'])
+            logging.info(f'ret = {ret}')
+            update_all = {
+                'fn': 'update_rounds',
+                'data': ret,
+            }
 
         if update:
             writer(tornado.escape.json_encode(update))
