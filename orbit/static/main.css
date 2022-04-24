@@ -131,6 +131,7 @@ div.selection {
 }
 .scorecard tr td:first-child, .scorecard tr th:first-child {
     text-align: left;
+    min-width: 6.5rem;
 }
 .scorecard tr>*:not(:first-child) {
     text-align: right;
@@ -199,4 +200,25 @@ div.selection {
     width: 100%;
     text-align: center;
     font-size: .7em;
+}
+
+.seasons .round_cols {
+    display: flex;
+}
+.seasons .cell {
+    min-height: 1.2em;
+    min-width: 2.5em;
+    padding: .1em .3em;
+}
+.seasons .cell:not(:first-child) {
+    text-align: right;
+}
+.seasons .cell.header {
+    font-weight: bold;
+    min-height: 1.6em;
+    border-bottom: 1px solid black;
+    margin-bottom: .3em;
+}
+.seasons .new_round {
+    margin: 1em 0;
 }

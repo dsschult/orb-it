@@ -24,5 +24,6 @@ jobs:
           pip install -r requirements.txt
       - name: Run Tests
         run: |
+          ./seed_test_data.sh
           python -m orbit &
           docker run --network=host -v $PWD:/e2e -w /e2e cypress/included:9.5.3

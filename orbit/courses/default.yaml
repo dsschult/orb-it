@@ -1,0 +1,38 @@
+name: Default
+holes:
+- par: 4
+  hcp: 1
+  yardages:
+    Default: 300
+- par: 4
+  hcp: 2
+  yardages:
+    Default: 300
+- par: 4
+  hcp: 3
+  yardages:
+    Default: 300
+- par: 4
+  hcp: 4
+  yardages:
+    Default: 300
+- par: 4
+  hcp: 5
+  yardages:
+    Default: 300
+- par: 4
+  hcp: 6
+  yardages:
+    Default: 300
+- par: 4
+  hcp: 7
+  yardages:
+    Default: 300
+- par: 4
+  hcp: 8
+  yardages:
+    Default: 300
+- par: 4
+  hcp: 9
+  yardages:
+    Default: 300

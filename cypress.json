@@ -3,5 +3,7 @@
   "env": {
     "USERNAME": "orbit",
     "PASSWORD": "golf"
-  }
+  },
+  "screenshotOnRunFailure": false,
+  "video": false
 }
