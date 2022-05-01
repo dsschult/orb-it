@@ -39,4 +39,21 @@ describe('seasons', () => {
       })
     })
   })
+
+  it('new round', () => {
+    cy.visit('/seasons', {
+      auth: {
+        username,
+        password,
+      },
+    })
+
+    cy.get('[data-test=select-season]').should('contain', '2021').should('have.value', '2021').select('2021')
+
+    cy.get('[name=new_round_date]').type('2021-10-11T01:02')
+    cy.get('[name=new_round_select]').should('contain', 'Default').select('Default')
+    cy.get('[data-test=new_round_submit]').click()
+    
+    cy.get('[data-test="2021-10-11T01:02"]').should('exist')
+  })
 })

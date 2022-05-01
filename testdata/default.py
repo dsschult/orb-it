@@ -35,6 +35,18 @@ rounds = [
             ('Player1', 'Player2'),
             ('Player3', 'Player4'),
         ]
+    },
+    {
+        'season': '2021',
+        'date': '2021-01-02T01:01',
+        'course': 'Default',
+        'players': {
+            'Player1': [0,0,0,0,0,0,0,0,0],
+            'Player2': [0,0,0,0,0,0,0,0,0],
+        },
+        'matchups': [
+            ('Player1', 'Player2'),
+        ]
     }
 ]
 

@@ -96,6 +96,10 @@ class ScoreCard(_Base):
             ret.append(row['_id'])
         return ret
 
+    async def get_round(self, uuid):
+        ret = await self.db.rounds.find_one({'uuid': uuid}, {'_id': False})
+        return {uuid: ret}
+
     async def find_rounds(self, season=None, date=None, course=None):
         filter = {}
         if season:
@@ -150,10 +154,14 @@ class ScoreCard(_Base):
                                                        return_document=ReturnDocument.AFTER)
         return {uuid: ret}
 
-    async def update_round_all(self, uuid, players=None, matchups=None):
+    async def update_round_all(self, uuid, date=None, course=None, players=None, matchups=None):
         round = await self.db.rounds.find_one({'uuid': uuid})
-        round_details = await self.get_course_details(round['course'])
+        round_details = await self.get_course_details(course if course else round['course'])
         update = {}
+        if date:
+            update['date'] = date
+        if course:
+            update['course'] = course
         if players:
             for player in players.values():
                 assert len(player['strokes']) == len(round_details)
@@ -169,7 +177,7 @@ class ScoreCard(_Base):
         all_strokes_in = True
         for player_uuid in round_data['players']:
             player = round_data['players'][player_uuid]
-            strokes = player['strokes']
+            strokes = [s for s in player['strokes'] if s > 0]
             if len(strokes) != len(course_details):
                 all_strokes_in = False
                 break

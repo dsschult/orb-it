@@ -178,6 +178,16 @@ class LiveScores:
                 'fn': 'get_players',
                 'data': ret,
             }
+        elif data['fn'] == 'new_player':
+            assert 'name' in data
+            assert 'hcp' in data
+            assert 'tee' in data
+            await self.players.new_player(data['name'], hcp=data['hcp'], tee=data['hcp'])
+            ret = await self.players.get_players()
+            update = {
+                'fn': 'get_players',
+                'data': ret,
+            }
         elif data['fn'] == 'get_course_list':
             ret = await self.scorecards.get_course_list()
             update = {
@@ -218,7 +228,7 @@ class LiveScores:
             await self.scorecards.new_round(season=data['season'], date=data['date'], course=data['course'])
             ret = await self.scorecards.find_rounds(season=data['season'], date=data['date'], course=data['course'])
             update_all = {
-                'fn': 'new_round',
+                'fn': 'update_rounds',
                 'data': ret,
             }
         elif data['fn'] == 'update_round_set_strokes':
@@ -241,6 +251,21 @@ class LiveScores:
                 'fn': 'update_rounds',
                 'data': ret,
             }
+        elif data['fn'] == 'update_round_all':
+            assert 'round' in data
+            await self.scorecards.update_round_all(data['round'],
+                    date=data.get('date', None),
+                    course=data.get('course', None),
+                    players=data.get('players', None),
+                    matchups=data.get('matchups', None)
+            )
+            ret = await self.scorecards.get_round(data['round'])
+            logging.info(f'ret = {ret}')
+            update_all = {
+                'fn': 'update_rounds',
+                'data': ret,
+            }
+            
 
         if update:
             writer(tornado.escape.json_encode(update))
