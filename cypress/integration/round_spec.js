@@ -110,4 +110,55 @@ describe('rounds', () => {
       })
     })
   })
+
+  it('select season and round', () => {
+    cy.visit('/rounds', {
+      auth: {
+        username,
+        password,
+      },
+    })
+
+    cy.get('[data-test=select-season]').should('contain', '2021').select('2021')
+    cy.get('[data-test=select-round]').should('contain', '2021-01-05 Yahara East (front)')
+
+    cy.contains('2021-01-05 Yahara East (front)').then(($e) => {
+      cy.get('[data-test=select-round]').select($e.val())
+    })
+    cy.get('[data-test=select-season-round]').should('not.exist')
+
+    cy.get('[data-test=matchup]:nth-child(1)').within(() => {
+      cy.get('h3').should('contain', 'Matchup: Player5 vs Player6')
+      cy.get('[data-test=Player5]').within(() => {
+        cy.get('.hcp').should('contain', '+20')
+        // nth child is hole num + 1
+        cy.get('td:nth-child(2) .hcp_dots').invoke('text').invoke('trim').should('have.length', 2)
+        cy.get('td:nth-child(3) .hcp_dots').invoke('text').invoke('trim').should('have.length', 3)
+        cy.get('td:nth-child(4) .hcp_dots').invoke('text').invoke('trim').should('have.length', 2)
+        cy.get('td:nth-child(5) .hcp_dots').invoke('text').invoke('trim').should('have.length', 2)
+        cy.get('td:nth-child(6) .hcp_dots').invoke('text').invoke('trim').should('have.length', 3)
+        cy.get('td:nth-child(7) .hcp_dots').invoke('text').invoke('trim').should('have.length', 2)
+        cy.get('td:nth-child(8) .hcp_dots').invoke('text').invoke('trim').should('have.length', 2)
+        cy.get('td:nth-child(9) .hcp_dots').invoke('text').invoke('trim').should('have.length', 2)
+        cy.get('td:nth-child(10) .hcp_dots').invoke('text').invoke('trim').should('have.length', 2)
+        cy.get('td:nth-child(4)').should('have.class', 'tie')
+        cy.get('td:nth-child(5)').should('have.class', 'win')
+        cy.get('td:nth-child(6)').should('have.class', 'win')
+        cy.get('td:nth-child(7)').should('have.class', 'tie')
+        cy.get('td:nth-child(10)').should('have.class', 'win')
+        cy.get('.total_points').should('contain', '6')
+      })
+      cy.get('[data-test=Player6]').within(() => {
+        cy.get('.hcp').should('contain', '')
+        // nth child is hole num + 1
+        cy.get('td:nth-child(2)').should('have.class', 'win')
+        cy.get('td:nth-child(3)').should('have.class', 'win')
+        cy.get('td:nth-child(4)').should('have.class', 'tie')
+        cy.get('td:nth-child(7)').should('have.class', 'tie')
+        cy.get('td:nth-child(8)').should('have.class', 'win')
+        cy.get('td:nth-child(9)').should('have.class', 'win')
+        cy.get('.total_points').should('contain', '7')
+      })
+    })
+  })
 })
