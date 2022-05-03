@@ -104,7 +104,7 @@ class ScoreCard(_Base):
         ret = []
         async for row in self.db.rounds.aggregate(pipeline):
             ret.append(row['_id'])
-        return sorted(ret)
+        return sorted(ret, reverse=True)
 
     async def get_round(self, uuid):
         ret = await self.db.rounds.find_one({'uuid': uuid}, {'_id': False})
