@@ -27,7 +27,9 @@ describe('rounds', () => {
 
     cy.get('[data-test=select-season]').should('contain', '2021').select('2021')
     cy.get('[data-test=select-round]').should('contain', '2021-01-01 Yahara East (front)')
-      .select('2021-01-01 Yahara East (front)')
+    cy.contains('2021-01-01 Yahara East (front)').then(($e) => {
+      cy.get('[data-test=select-round]').select($e.val())
+    })
     cy.get('[data-test=select-season-round]').should('not.exist')
 
     // test scorecard
