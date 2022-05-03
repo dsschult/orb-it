@@ -1,7 +1,7 @@
 name: Run cypress tests
 on: [push]
 jobs:
-  test:
+  webtest:
     name: Cypress Tests
     runs-on: ubuntu-latest
     services:
@@ -27,3 +27,27 @@ jobs:
           ./seed_test_data.sh
           python -m orbit &
           docker run --network=host -v $PWD:/e2e -w /e2e cypress/included:9.5.3
+
+  pytest:
+    name: Python Tests
+    runs-on: ubuntu-latest
+    services:
+      mongo:
+        image: mongo:4.0
+        ports:
+          - 27017:27017
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v2
+      - name: Setup Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.8'
+      - name: Setup Dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Run Tests
+        run: |
+          python -m pytest tests
+    
