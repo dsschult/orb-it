@@ -8,6 +8,7 @@
 <link rel="shortcut icon" href="/static/favicon.png">
 <link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
 <link rel="stylesheet" href="/static/boilerplate.css?v=7.3.0">
+<link rel="stylesheet" href="https://fonts.sandbox.google.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20,400,1,0" />
 <link rel="stylesheet" href="/static/main.css">
 </head>
 <body>
@@ -20,7 +21,7 @@
 </header>
 <nav id="nav">
   <ol>
-    <li is="navpage" v-for="page in routes" :key="page.path" :path="page.path" :name="page.name" :current="current"></li>
+    <li is="navpage" v-for="page in visibleRoutes" :key="page.path" :path="page.path" :name="page.name" :current="current"></li>
   </ol>
 </nav>
 <main>
@@ -91,19 +92,24 @@ ws.onmessage = function (evt) {
     global_data.rounds = data.data
   }
   else if (data.fn == 'update_rounds') {
-    for (const uuid in data.data) {
+    /*for (const uuid in data.data) {
       global_data.rounds[uuid] = data.data[uuid]
+    }*/
+    let rounds = Object.assign({}, global_data.rounds)
+    for (const uuid in data.data) {
+      rounds[uuid] = data.data[uuid]
     }
-    //let rounds = Object.assign(data.data, global_data.rounds)
-    //global_data.rounds = rounds
+    global_data.rounds = rounds
   }
   else if (data.fn == 'get_course_list') {
+    let courses = Object.assign({}, global_data.courses)
     for (const c of data.data) {
-      if (! (c in global_data.courses)) {
+      if (! (c in courses)) {
         console.log('add course '+c)
-        global_data.courses[c] = []
+        courses[c] = {holes: []}
       }
     }
+    global_data.courses = courses
   }
   else if (data.fn == 'get_course_details') {
     console.log('add course details '+data.course)

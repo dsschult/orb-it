@@ -47,7 +47,20 @@ rounds = [
         'matchups': [
             ('Player1', 'Player2'),
         ]
+    },
+    {
+        'season': '2022',
+        'date': '2022-01-10',
+        'course': 'Default',
+        'players': {
+            'Player1': [4,6,4,5,6,4,5,4,0],
+            'Player2': [6,6,4,6,6,6,6,6,5],
+        },
+        'matchups': [
+            ('Player1', 'Player2'),
+        ]
     }
 ]
 
-asyncio.run(process(players, rounds))
+if __name__ == '__main__':
+    asyncio.run(process(players, rounds))

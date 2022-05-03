@@ -1,40 +1,40 @@
 
 const Home = {
-    data: function(){
-      return {
+  data: function(){
+    return {
+    }
+  },
+  props: ['data'],
+  created: function() {
+    this.fetchData()
+  },
+  watch: {
+    '$route': 'fetchData'
+  },
+  methods: {
+    fetchData: function() {
+      console.log('fetchData()')
+      this.data.send_msg({fn: 'get_rounds'})
+    }
+  },
+  computed: {
+    seasons: function() {
+      let ret = ''
+      for (const s of this.data.seasons) {
+        ret += s+' '
       }
+      return ret
     },
-    props: ['data'],
-    created: function() {
-      this.fetchData()
-    },
-    watch: {
-      '$route': 'fetchData'
-    },
-    methods: {
-      fetchData: function() {
-        console.log('fetchData()')
-        this.data.send_msg({fn: 'get_rounds'})
+    rounds: function() {
+      let ret = ''
+      for (const r in this.data.rounds) {
+        const round = this.data.rounds[r];
+        ret += round.date+' '+round.course+' '
       }
-    },
-    computed: {
-      seasons: function() {
-        let ret = ''
-        for (const s of this.data.seasons) {
-          ret += s+' '
-        }
-        return ret
-      },
-      rounds: function() {
-        let ret = ''
-        for (const r in this.data.rounds) {
-          const round = this.data.rounds[r];
-          ret += round.date+' '+round.course+' '
-        }
-        return ret
-      }
-    },
-    template: `
+      return ret
+    }
+  },
+  template: `
 <article class="home">
   <h2>Home</h2>
   <p>{{ seasons }}</p>
@@ -43,79 +43,79 @@ const Home = {
 }
 
 const Rounds = {
-    data: function(){
-      return {
-        'season': '',
-        'round': ''
+  data: function(){
+    return {
+      'season': '',
+      'round': ''
+    }
+  },
+  props: ['data'],
+  created: function() {
+    this.fetchData()
+  },
+  watch: {
+    '$route': 'fetchData',
+    'season': 'updateHistory',
+    'round': 'updateHistory',
+  },
+  methods: {
+    fetchData: function() {
+      console.log('fetchData()')
+      this.data.send_msg({fn: 'get_rounds'})
+      if (this.$route.query.season) {
+        this.season = this.$route.query.season
+      }
+      if (this.$route.query.round) {
+        this.round = this.$route.query.round
       }
     },
-    props: ['data'],
-    created: function() {
-      this.fetchData()
-    },
-    watch: {
-      '$route': 'fetchData',
-      'season': 'updateHistory',
-      'round': 'updateHistory',
-    },
-    methods: {
-      fetchData: function() {
-        console.log('fetchData()')
-        this.data.send_msg({fn: 'get_rounds'})
-        if (this.$route.query.season) {
-          this.season = this.$route.query.season
-        }
-        if (this.$route.query.round) {
-          this.round = this.$route.query.round
-        }
-      },
-      updateHistory() {
-        if (this.season && this.round) {
-          if (this.$route.query.season != this.season || this.$route.query.round != this.round) {
-            this.$router.push({ path: '/rounds', query: { season: this.season, round: this.round } })
-          }
+    updateHistory() {
+      if (this.season && this.round) {
+        if (this.$route.query.season != this.season || this.$route.query.round != this.round) {
+          this.$router.push({ path: '/rounds', query: { season: this.season, round: this.round } })
         }
       }
+    }
+  },
+  computed: {
+    seasons: function() {
+      return this.data.seasons;
     },
-    computed: {
-      seasons: function() {
-        return this.data.seasons;
-      },
-      rounds: function() {
-        let ret = {};
-        for (const r in this.data.rounds) {
-          const round = this.data.rounds[r];
-          if (round.season == this.season) {
-            ret[round.uuid] = round.date.split('T')[0]+' '+round.course;
-          }
+    rounds: function() {
+      let ret = {};
+      for (const r in this.data.rounds) {
+        const round = this.data.rounds[r];
+        if (round.season == this.season) {
+          ret[round.uuid] = round.date.split('T')[0]+' '+round.course;
         }
-        return ret
-      },
-      round_info: function() {
-        if (this.round in this.data.rounds) {
-          const round = this.data.rounds[this.round];
-          this.data.send_msg({fn: 'get_course_details', course: round.course})
-          return round
-        }
-        return {}
-      },
-      course_name: function() {
-        if (this.round in this.data.rounds) {
-          return this.data.rounds[this.round].course;
-        }
-        return ''
-      },
-      course_info: function() {
-        if (this.round in this.data.rounds) {
-          const r = this.data.rounds[this.round]
-          if (r.course in this.data.courses && this.data.courses[r.course].length) {
-            return this.data.courses[r.course]
-          }
-        }
-        return []
       }
+      return ret
     },
-    template: `
+    round_info: function() {
+      if (this.round in this.data.rounds) {
+        const round = this.data.rounds[this.round];
+        this.data.send_msg({fn: 'get_course_details', course: round.course})
+        return round
+      }
+      return {}
+    },
+    course_name: function() {
+      if (this.round in this.data.rounds) {
+        return this.data.rounds[this.round].course;
+      }
+      return ''
+    },
+    course_info: function() {
+      if (this.round in this.data.rounds) {
+        const r = this.data.rounds[this.round]
+        if (r.course in this.data.courses && this.data.courses[r.course].holes.length) {
+          return this.data.courses[r.course].holes
+        }
+      }
+      return []
+    }
+  },
+  template: `
 <article class="rounds">
   <div class="selection">
     <select v-model="season" data-test="select-season">
@@ -141,123 +141,117 @@ const Rounds = {
 }
 
 const Seasons = {
-    data: function(){
-      return {
-        'season': '',
-        'newdate': ''
+  data: function(){
+    return {
+      'season': ''
+    }
+  },
+  props: ['data'],
+  created: function() {
+    this.fetchData()
+  },
+  watch: {
+    '$route': 'fetchData',
+    'season': 'updateHistory',
+    'seasons': 'seasonsIsUpdated',
+  },
+  methods: {
+    fetchData: function() {
+      console.log('fetchData()')
+      this.data.send_msg({fn: 'get_rounds'})
+      if (this.$route.query.season) {
+        this.season = this.$route.query.season
       }
     },
-    props: ['data'],
-    created: function() {
-      this.fetchData()
-    },
-    watch: {
-      '$route': 'fetchData',
-      'season': 'updateHistory',
-      'seasons': 'seasonsIsUpdated',
-    },
-    methods: {
-      fetchData: function() {
-        console.log('fetchData()')
-        this.data.send_msg({fn: 'get_rounds'})
-        if (this.$route.query.season) {
-          this.season = this.$route.query.season
+    seasonsIsUpdated: function() {
+      if (!(this.season)) {
+        for (const s of this.seasons) {
+          this.season = s
+          break
         }
-      },
-      seasonsIsUpdated: function() {
-        if (!(this.season)) {
-          for (const s of this.seasons) {
-            this.season = s
-            break
-          }
-        }
-      },
-      updateHistory() {
-        if (this.season) {
-          if (this.$route.query.season != this.season) {
-            this.$router.push({ path: '/seasons', query: { season: this.season } })
-          }
-        }
-      },
-      newRound() {
-        if (this.newdate) {
-          this.data.send_msg({fn: 'new_round', season: this.season, date: this.newdate, course: 'Default'})
-        }
-      },
-      get_points(round, player_uuid) {
-        let ret = '---'
-        if (player_uuid in round.players) {
-          const player_round = round.players[player_uuid]
-          if ('points' in player_round) {
-            const pts = player_round.points
-            ret = pts.match + ' + ' + pts.net
-          }
-        }
-        return ret
       }
     },
-    computed: {
-      seasons: function() {
-        return this.data.seasons;
-      },
-      rounds: function() {
-        let ret = {}
-        for (const uuid in this.data.rounds) {
-          const round = this.data.rounds[uuid]
-          if (round.season == this.season) {
-            ret[uuid] = round
+    updateHistory() {
+      if (this.season) {
+        if (this.$route.query.season != this.season) {
+          this.$router.push({ path: '/seasons', query: { season: this.season } })
+        }
+      }
+    },
+    get_points(round, player_uuid) {
+      let ret = '---'
+      if (player_uuid in round.players) {
+        const player_round = round.players[player_uuid]
+        if ('points' in player_round) {
+          const pts = player_round.points
+          ret = pts.match + ' + ' + pts.net
+        }
+      }
+      return ret
+    }
+  },
+  computed: {
+    seasons: function() {
+      return this.data.seasons;
+    },
+    rounds: function() {
+      let ret = {}
+      for (const uuid in this.data.rounds) {
+        const round = this.data.rounds[uuid]
+        if (round.season == this.season) {
+          ret[uuid] = round
+        }
+      }
+      return ret
+    },
+    players: function() {
+      let ret = {}
+      for (const uuid in this.rounds) {
+        for (const player_uuid in this.rounds[uuid].players) {
+          if (!(player_uuid in ret)) {
+            ret[player_uuid] = this.data.players[player_uuid]
           }
         }
-        return ret
-      },
-      players: function() {
-        let ret = {}
+      }
+      return ret
+    },
+    player_scores: function() {
+      let scores = {}
+      for (const player_uuid in this.players) {
+        let match = 0
+        let net = 0
         for (const uuid in this.rounds) {
-          for (const player_uuid in this.rounds[uuid].players) {
-            if (!(player_uuid in ret)) {
-              ret[player_uuid] = this.data.players[player_uuid]
+          const round = this.rounds[uuid]
+          if (player_uuid in round.players) {
+            const player_round = round.players[player_uuid]
+            if ('points' in player_round) {
+              const pts = player_round.points
+              match += pts.match
+              net += pts.net
             }
           }
+        }
+        scores[player_uuid] = {
+          total: match + net,
+          match: match,
+          net: net
+        }
+      }
+      console.log('player_scores', scores)
+      return scores
+    },
+    player_ordering: function() {
+      const scores = this.player_scores
+      return Object.keys(scores).sort(function(a,b){
+        let ret = scores[b].total-scores[a].total
+        if (ret == 0) {
+          ret = scores[b].match-scores[a].match
         }
         return ret
-      },
-      player_scores: function() {
-        let scores = {}
-        for (const player_uuid in this.players) {
-          let match = 0
-          let net = 0
-          for (const uuid in this.rounds) {
-            const round = this.rounds[uuid]
-            if (player_uuid in round.players) {
-              const player_round = round.players[player_uuid]
-              if ('points' in player_round) {
-                const pts = player_round.points
-                match += pts.match
-                net += pts.net
-              }
-            }
-          }
-          scores[player_uuid] = {
-            total: match + net,
-            match: match,
-            net: net
-          }
-        }
-        console.log('player_scores', scores)
-        return scores
-      },
-      player_ordering: function() {
-        const scores = this.player_scores
-        return Object.keys(scores).sort(function(a,b){
-          let ret = scores[b].total-scores[a].total
-          if (ret == 0) {
-            ret = scores[b].match-scores[a].match
-          }
-          return ret
-        })
-      }
-    },
-    template: `
+      })
+    }
+  },
+  template: `
 <article class="seasons">
   <div class="selection">
     <select v-model="season" data-test="select-season">
@@ -277,9 +271,17 @@ const Seasons = {
             <span class="name">{{ round.name }}</span>
             <span class="date">{{ round.date.split('T')[0] }}</span>
           </router-link>
+          <router-link :to="{ name: 'edit_round', query: { round: uuid }}" class="edit-link"><span class="material-symbols-outlined">edit_note</span></router-link>
+          <span class="material-symbols-outlined" @click="delete_round(uuid)">delete_forever</span>
         </div>
         <div class="cell" v-for="player_uuid in player_ordering">
           {{ get_points(round, player_uuid) }}
+        </div>
+      </div>
+      <div class="col hcp">
+        <div class="cell header">Current HCP</div>
+        <div class="cell" v-for="player_uuid in player_ordering">
+          {{ Math.round(data.players[player_uuid].current_hcp/2) }}
         </div>
       </div>
       <div class="col match">
@@ -301,16 +303,374 @@ const Seasons = {
         </div>
       </div>
     </div>
-    <div class="new_round">
-      <h4>New Round</h4>
-      <select>
-        <option>course</option>
-      </select>
-    </div>
+    <new_round :season="season" :data="data" :courses="data.courses"></new_round>
   </div>
   <div v-else>Select season</div>
 </article>`
 }
+
+const EditRound = {
+  data: function(){
+    return {
+      'round_uuid': '',
+      'round_date': '',
+      'round_course': '',
+      'round_players': [],
+      'round_player_hcps': {},
+      'round_matchups': [],
+    }
+  },
+  props: ['data'],
+  created: function() {
+    this.fetchData()
+  },
+  watch: {
+    '$route': 'fetchData',
+    'round': function() {
+      if (this.round_course == '') {
+        console.log('watch round', this.round)
+        this.round_date = this.round.date
+        this.round_course = this.round.course
+        let player_uuids = []
+        for (const uuid in this.round.players) {
+          player_uuids.push(uuid)
+        }
+        this.round_players = player_uuids
+        let player_hcps = {}
+        for (const uuid of player_uuids) {
+          player_hcps[uuid] = this.round.players[uuid].hcp
+        }
+        this.round_player_hcps = player_hcps
+        let matchups = []
+        for (const m of this.round.matchups) {
+          matchups.push(m)
+        }
+        this.round_matchups = matchups
+      }
+    },
+    'round_course': function() {
+      if (!(this.round_course in this.data.courses && this.data.courses[this.round_course].holes.length > 0)) {
+        this.data.send_msg({fn: 'get_course_details', course: this.round_course})
+      }
+    },
+    'round_players': function() {
+      console.log('round_players', this.round_players)
+    },
+    'round_matchups': function() {
+      console.log('round_matchups', this.round_matchups)
+    }
+  },
+  computed: {
+    round: function() {
+      console.log('computed round()')
+      for (const uuid in this.data.rounds) {
+        if (uuid == this.round_uuid) {
+          return this.data.rounds[uuid]
+        }
+      }
+      console.log('computed round() not found')
+      return {}
+    },
+    players: function() {
+      let ret = {}
+      for (const player_uuid of this.round_players) {
+        ret[player_uuid] = this.data.players[player_uuid]
+      }
+      return ret
+    },
+    available_matchup_players: function() {
+      let existing_matchup_players = {}
+      for (const m of this.round_matchups) {
+        for (const u of m) {
+          existing_matchup_players[u] = u
+        }
+      }
+      let ret = []
+      for (const player_uuid of this.round_players) {
+        if (!(player_uuid in existing_matchup_players)) {
+          ret.push(player_uuid)
+        }
+      }
+      return ret
+    }
+  },
+  methods: {
+    fetchData: function() {
+      console.log('fetchData()', this.$route.query)
+      this.data.send_msg({fn: 'get_rounds'})
+      if (this.$route.query.round) {
+        this.round_uuid = this.$route.query.round
+      } else {
+        console.log('no round uuid, redirect to /seasons')
+        this.$router.push({name: 'seasons'})
+      }
+    },
+    update_hcps: function() {
+      let ret = {}
+      for (const uuid of this.round_players) {
+        ret[uuid] = this.players[uuid].current_hcp
+      }
+      this.round_player_hcps = ret
+    },
+    add_matchup: function() {
+      for (const m of this.round_matchups) {
+        if (m.length == 0) {
+          return
+        }
+      }
+      this.round_matchups.push([])
+    },
+    update_matchup: function(old_matchup, new_matchup) {
+      let ret = []
+      for (const m of this.round_matchups) {
+        if (m == old_matchup) {
+          ret.push(new_matchup)
+        } else {
+          ret.push(m)
+        }
+      }
+      this.round_matchups = ret
+    },
+    remove_matchup: function(matchup) {
+      let ret = []
+      for (const m of this.round_matchups) {
+        if (m != matchup) {
+          ret.push(m)
+        }
+      }
+      this.round_matchups = ret
+    },
+    submit: function() {
+      console.log('submit', this)
+      if (this.round_date != '' && this.round_course != '') {
+        console.log(this.round)
+        let players = {}
+        for (const uuid of this.round_players) {
+          let hcp = 0
+          if (uuid in this.round_player_hcps) {
+            hcp = this.round_player_hcps[uuid]
+            console.log('local hcp', hcp)
+          } else if ('current_hcp' in this.data.players[uuid]) {
+            hcp = this.data.players[uuid].current_hcp
+            console.log('global hcp', hcp)
+          } else {
+            console.log('cannot find hcp for player '+uuid)
+          }
+          let strokes = []
+          if (uuid in this.round.players && 'strokes' in this.round.players[uuid]) {
+            strokes = this.round.players[uuid].strokes
+            console.log('round strokes for player '+uuid+':', strokes)
+          }
+          if (this.round_course in this.data.courses && this.data.courses[this.round_course].holes.length > 0) {
+            const num_holes = this.data.courses[this.round_course].holes.length;
+            if (num_holes < strokes.length) {
+              strokes = []
+            }
+            const add_strokes = num_holes - strokes.length
+            for (let i=0;i<add_strokes;i++) {
+              strokes.push(0)
+            }
+          } else {
+            console.log('course info not available for '+this.round_course)
+            return
+          }
+          players[uuid] = {
+            'hcp': hcp,
+            'strokes': strokes
+          }
+        }
+        const msg = {
+          fn: 'update_round_all',
+          round: this.round_uuid,
+          date: this.round_date,
+          course: this.round_course,
+          players: players,
+          matchups: this.round_matchups
+        }
+        console.log('submit round update', msg)
+        this.data.send_msg(msg)
+      }
+    }
+  },
+  template: `
+<article class="edit_round">
+  <h2>Edit Round</h2>
+  <input name="uuid" type="hidden" :value="round_uuid" />
+  <div>
+    <label for="season">Season:</label>
+    <input name="season" type="text" disabled :value="round.season" />
+  </div>
+  <div>
+    <label for="date">Date:</label>
+    <input name="date" type="datetime-local" v-model="round_date" />
+  </div>
+  <div>
+    <label for="course">Course:</label>
+    <select name="course" v-model="round_course">
+      <option disabled value="">Select a course</option>
+      <option v-for="val, name in data.courses" :value="name">{{ name }}</option>
+    </select>
+  </div>
+  <div>
+    <label for="players">Players:</label>
+    <div class="players">
+      <div><select name="players" v-model="round_players" multiple>
+        <option v-for="val, uuid in data.players" :value="uuid" :data-test="val.name">{{ val.name }}</option>
+      </select></div>
+      <button @click="update_hcps" data-test="update_hcps">Update HCPs</button>
+    </div>
+  </div>
+  <div>
+    <label>Matchups:</label>
+    <div class="matchups">
+      <div v-for="matchup in round_matchups" class="matchup">
+        <edit_matchup :matchup="matchup" :update="update_matchup" :avail_players="available_matchup_players" :players="players"></edit_matchup>
+        <span class="material-symbols-outlined" @click="remove_matchup(matchup)">delete_forever</span>
+      </div>
+      <button @click="add_matchup" data-test="add_matchup">Add New Matchup</button>
+    </div>
+  </div>
+  <button @click="submit" data-test="submit">Update</button>
+</article>`
+}
+
+const NewPlayer = {
+  data: function(){
+    return {
+      'name': '',
+      'hcp': 0,
+      'tee': 'std',
+      'tee_options': ['std', 'short']
+    }
+  },
+  props: ['data'],
+  computed: {
+    hcp9: {
+      get: function() {
+        return Math.round(this.hcp / 2)
+      },
+      set: function(val) {
+        this.hcp = val*2
+      }
+    }
+  },
+  methods: {
+    submit: function() {
+      if (this.name != '') {
+        const msg = {
+          fn: 'new_player',
+          name: this.name,
+          hcp: this.hcp,
+          tee: this.tee
+        }
+        console.log('submit new player', msg)
+        this.data.send_msg(msg)
+      }
+    }
+  },
+  template: `
+<article class="new_player">
+  <h2>New Player</h2>
+  <div>
+    <label for="name">Name:</label>
+    <input name="name" type="text" v-model="name" />
+  </div>
+  <div>
+    <label for="hcp">Current handicap<br>(18 holes):</label>
+    <input name="hcp" type="number" v-model.number="hcp" />
+  </div>
+  <div>
+    <label for="hcp9">Current handicap<br>(9 holes):</label>
+    <input name="hcp9" type="number" v-model.number="hcp9" />
+  </div>
+  <div>
+    <label for="tee">Tee selection:</label>
+    <select name="tee" v-model="tee">
+      <option v-for="opt in tee_options" :value="opt">{{ opt }}</option>
+    </select>
+  </div>
+  <button @click="submit" data-test="submit">Create</button>
+</article>`
+}
+
+Vue.component('edit_matchup', {
+  data: function(){
+    return {
+      matchup: [],
+      update: null,
+      avail_players: [],
+      players: {},
+      model_matchup: [],
+    }
+  },
+  props: ['matchup', 'update', 'avail_players', 'players'],
+  created: function() {
+    for (const m of this.matchup) {
+      this.model_matchup.push(m)
+    }
+  },
+  watch: {
+    model_matchup: function(newVal, oldVal) {
+      if (newVal != this.matchup) {
+        this.update(this.matchup, newVal)
+      } 
+    }
+  },
+  computed: {
+    name: function() {
+      let ret = 'matchup'
+      for (const m of this.matchup) {
+        ret += '-'+m
+      }
+      return ret
+    }
+  },
+  template: `
+<select :name="name" autocomplete="off" v-model="model_matchup" @change multiple>
+  <option v-if="matchup.length == 0 && avail_players.length == 0" disabled value="">Select match players</option>
+  <option v-for="uuid in matchup" :value="uuid" :data-test="players[uuid].name">{{ players[uuid].name }}</option>
+  <option v-for="uuid in avail_players" :value="uuid" :data-test="players[uuid].name">{{ players[uuid].name }}</option>
+</select>`
+})
+  
+
+Vue.component('new_round', {
+  data: function(){
+    return {
+      date: '',
+      course: '',
+      data: null,
+    }
+  },
+  props: ['season', 'data', 'courses'],
+  methods: {
+    submit: function(){
+      console.log('submit', this.date, this.course)
+      if (this.date != '' && this.course != '') {
+        const msg = {fn: 'new_round', season: this.season, date: this.date, course: this.course}
+        console.log('submit new round', msg)
+        this.data.send_msg(msg)
+      }
+    }
+  },
+  template: `
+<div class="new_round">
+  <h4>New Round</h4>
+  <div>
+    <label for="new_round_date">Date:</label>
+    <input type="datetime-local" name="new_round_date" v-model="date" />
+  </div>
+  <div>
+    <label for="new_round_select">Course:</label>
+    <select name="new_round_select" data-test="new_round_select" v-model="course">
+      <option disabled value="">Select a course</option>
+      <option v-for="val, name in courses" :value="name">{{ name }}</option>
+    </select>
+  </div>
+  <button data-test="new_round_submit" @click="submit">Add Round</button>
+</div>
+`
+})
 
 Vue.component('scorecard', {
   data: function(){
@@ -763,12 +1123,15 @@ Vue.component('navpage', {
         active: this.name == this.current
       }
     },
+    cleanedName: function() {
+      return this.name.replace('_', ' ')
+    }
   },
   beforeRouteEnter(to, from, next) {
     this.current = to.params.route
     next()
   },
-  template: '<li :class="classObj"><router-link :to="path">{{ name }}</router-link></li>'
+  template: '<li :class="classObj"><router-link :to="path">{{ cleanedName }}</router-link></li>'
 });
 
 // scrollBehavior:
@@ -825,6 +1188,8 @@ async function vue_startup(data){
     { path: '/', name: 'home', component: Home, props: { data: data } },
     { path: '/rounds', name: 'rounds', component: Rounds, props: { data: data } },
     { path: '/seasons', name: 'seasons', component: Seasons, props: { data: data } },
+    { path: '/edit_round', name: 'edit_round', component: EditRound, props: { data: data } },
+    { path: '/new_player', name: 'new_player', component: NewPlayer, props: { data: data } },
     { path: '*', name: '404', component: Error404, props: true }
   ];
   let available_routes = [];
@@ -847,6 +1212,21 @@ async function vue_startup(data){
       current: 'home'
     },
     router: router,
+    asyncComputed: {
+      visibleRoutes: async function() {
+        var current = this.current;
+        var ret = []
+        for (const r of this.routes) {
+          if (r.path[0] == '*')
+            continue
+          if (r.path.startsWith('/edit_round') && current != 'edit_round')
+            continue
+          ret.push(r)
+        }
+        console.log('routes',ret)
+        return ret
+      }
+    },
     watch: {
       '$route.currentRoute.path': {
         handler: function() {
