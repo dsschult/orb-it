@@ -106,7 +106,7 @@ ws.onmessage = function (evt) {
     for (const c of data.data) {
       if (! (c in courses)) {
         console.log('add course '+c)
-        courses[c] = []
+        courses[c] = {holes: []}
       }
     }
     global_data.courses = courses

@@ -108,8 +108,8 @@ const Rounds = {
     course_info: function() {
       if (this.round in this.data.rounds) {
         const r = this.data.rounds[this.round]
-        if (r.course in this.data.courses && this.data.courses[r.course].length) {
-          return this.data.courses[r.course]
+        if (r.course in this.data.courses && this.data.courses[r.course].holes.length) {
+          return this.data.courses[r.course].holes
         }
       }
       return []
@@ -349,7 +349,7 @@ const EditRound = {
       }
     },
     'round_course': function() {
-      if (!(this.round_course in this.data.courses && this.data.courses[this.round_course].length > 0)) {
+      if (!(this.round_course in this.data.courses && this.data.courses[this.round_course].holes.length > 0)) {
         this.data.send_msg({fn: 'get_course_details', course: this.round_course})
       }
     },
@@ -461,8 +461,8 @@ const EditRound = {
             strokes = this.round.players[uuid].strokes
             console.log('round strokes for player '+uuid+':', strokes)
           }
-          if (this.round_course in this.data.courses && this.data.courses[this.round_course].length > 0) {
-            const num_holes = this.data.courses[this.round_course].length;
+          if (this.round_course in this.data.courses && this.data.courses[this.round_course].holes.length > 0) {
+            const num_holes = this.data.courses[this.round_course].holes.length;
             if (num_holes < strokes.length) {
               strokes = []
             }

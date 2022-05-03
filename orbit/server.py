@@ -253,18 +253,32 @@ class LiveScores:
             }
         elif data['fn'] == 'update_round_all':
             assert 'round' in data
-            await self.scorecards.update_round_all(data['round'],
+            ret = await self.scorecards.update_round_all(data['round'],
                     date=data.get('date', None),
                     course=data.get('course', None),
                     players=data.get('players', None),
                     matchups=data.get('matchups', None)
             )
+            logging.info(f'ret = {ret}')
+            update_all = {
+                'fn': 'update_rounds',
+                'data': ret,
+            }
+        elif data['fn'] == 'score_round':
+            assert 'round' in data
+            players = await self.players.get_players()
+            ret = await self.scorecards.score_round(data['round'], player_data=players)
+            if ret: # round was scored, so update player hcps
+                new_hcps = await self.scorecards.recalc_hcps(players)
+                for uuid in new_hcps:
+                    await self.players.update_player(uuid, hcp=new_hcps[uuid])
             ret = await self.scorecards.get_round(data['round'])
             logging.info(f'ret = {ret}')
             update_all = {
                 'fn': 'update_rounds',
                 'data': ret,
             }
+            
             
 
         if update:

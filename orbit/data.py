@@ -18,18 +18,28 @@ class Player(_Base):
         pass
 
     async def new_player(self, name, hcp=None, tee='std'):
+        uuid = gen_uuid()
         await self.db.players.insert_one({
-            "uuid": gen_uuid(),
+            "uuid": uuid,
             "name": name,
             "current_hcp": hcp if hcp else -1,
             "tee": tee,
         })
+        return uuid
 
     async def get_players(self):
         ret = {}
         async for row in self.db.players.find({}, {'_id': False}):
             ret[row['uuid']] = row
         return ret
+
+    async def update_player(self, uuid, hcp=None, tee=None):
+        update = {}
+        if hcp:
+            update['current_hcp'] = hcp
+        if tee:
+            update['tee'] = tee
+        await self.db.players.update_one({'uuid': uuid}, {'$set': update})
 
 
 class ScoreCard(_Base):
@@ -62,7 +72,7 @@ class ScoreCard(_Base):
                                 assert isinstance(yards, int)
                         hole['num'] = i+1
                     # add to course list
-                    self.courses[name] = holes
+                    self.courses[name] = data
 
     async def get_course_list(self):
         return list(self.courses.keys())
@@ -118,7 +128,7 @@ class ScoreCard(_Base):
         round = await self.db.rounds.find_one({'uuid': uuid})
         round_details = await self.get_course_details(round['course'])
 
-        field = f'players.{uuid}'
+        field = f'players.{player_uuid}'
         update = {
             '$set': {field: {'hcp': player_hcp, 'strokes': [0 for _ in round_details['holes']]}}
         }
@@ -129,7 +139,7 @@ class ScoreCard(_Base):
     async def update_round_set_strokes(self, uuid, player_uuid, strokes):
         round = await self.db.rounds.find_one({'uuid': uuid})
         round_details = await self.get_course_details(round['course'])
-        assert len(strokes) == len(round_details)
+        assert len(strokes) == len(round_details['holes'])
         for s in strokes:
             assert isinstance(s, int)
             assert 0 <= s < 100
@@ -164,11 +174,14 @@ class ScoreCard(_Base):
             update['course'] = course
         if players:
             for player in players.values():
-                assert len(player['strokes']) == len(round_details)
+                assert len(player['strokes']) == len(round_details['holes'])
             update['players'] = players
         if matchups:
             update['matchups'] = matchups
-        await self.db.rounds.update_one({'uuid': uuid}, {'$set': update})
+        ret = await self.db.rounds.find_one_and_update({'uuid': uuid}, {'$set': update},
+                                                       projection={'_id': False},
+                                                       return_document=ReturnDocument.AFTER)
+        return {uuid: ret}
 
     async def score_round(self, uuid, player_data={}):
         round_data = await self.db.rounds.find_one({'uuid': uuid})
@@ -178,7 +191,7 @@ class ScoreCard(_Base):
         for player_uuid in round_data['players']:
             player = round_data['players'][player_uuid]
             strokes = [s for s in player['strokes'] if s > 0]
-            if len(strokes) != len(course_details):
+            if len(strokes) != len(course_details['holes']):
                 all_strokes_in = False
                 break
 
@@ -197,7 +210,7 @@ class ScoreCard(_Base):
 
                 # rank holes by hcp
                 course_hcp_key = 'short_hcp' if any(player_data[player_uuid]['tee'] == 'short' for player_uuid in player_uuids) else 'hcp'
-                sorted_holes = sorted(course_details, key=lambda hole: hole[course_hcp_key])
+                sorted_holes = sorted(course_details['holes'], key=lambda hole: hole[course_hcp_key])
                 logging.debug('sorted holes: %r', sorted_holes)
 
                 # adjust the hcps according to match play rules
@@ -248,3 +261,72 @@ class ScoreCard(_Base):
             # update round
             for player_uuid in player_points:
                 await self.update_round_set_points(uuid, player_uuid, player_points[player_uuid])
+
+        return all_strokes_in
+
+
+    async def recalc_hcps(self, player_data, rounds_considered=20, best_rounds=8, with_slope=False, oldCalc=False):
+        new_hcps = {}
+        for player_uuid in player_data:
+            slope_key = 'short' if player_data[player_uuid]['tee'] == 'short' else 'std'
+            score_differential_9 = None
+            score_differentials = []
+
+            # get differentials for prev rounds played
+            async for row in self.db.rounds.find({f'players.{player_uuid}.points': {'$exists': True}}, sort=[('date', pymongo.DESCENDING)]):
+                course_details = await self.get_course_details(row['course'])
+                gross_score = sum(row['players'][player_uuid]['strokes'])
+                if with_slope and 'slope_rating' in course_details:
+                    slope_rating = list(course_details['slope_rating'].values())[slope_key]
+                    course_rating = list(course_details['course_rating'].values())[slope_key]
+                    score_differential = (113. / slope_rating) * (gross_score - course_rating)
+                else:
+                    course_par = sum(h['par'] for h in course_details['holes'])
+                    score_differential = gross_score - course_par
+
+                if len(course_details['holes']) != 18:
+                    if score_differential_9:
+                        score_differential += score_differential_9
+                        score_differential_9 = None
+                    else:
+                        score_differential_9 = score_differential
+                        continue
+                score_differentials.append(round(score_differential, 1))
+                if len(score_differentials) >= rounds_considered:
+                    break
+
+            if oldCalc:
+                # best N of M, no adjustments
+                hcp = sum(sorted(score_differentials)[:best_rounds])/best_rounds
+                hcp = round(hcp)
+            else:
+                # PGA HCP calc
+                num_differentials = len(score_differentials)
+                if rounds_considered > 5 and num_differentials <= 5:
+                    # lowest 1 score with adjustment
+                    hcp = min(score_differentials) - (5-num_differentials)
+                elif rounds_considered > 8 and num_differentials <= 8:
+                    # lowest 2 scores with adjustment
+                    hcp = sum(sorted(score_differentials)[:2])/2 - (1 if num_differentials == 6 else 0)
+                elif rounds_considered > 11 and num_differentials <= 11:
+                    # lowest 3 scores
+                    hcp = sum(sorted(score_differentials)[:3])/3
+                elif rounds_considered > 14 and num_differentials <= 14:
+                    # lowest 4 scores
+                    hcp = sum(sorted(score_differentials)[:4])/4
+                elif rounds_considered > 16 and num_differentials <= 16:
+                    # lowest 5 scores
+                    hcp = sum(sorted(score_differentials)[:5])/5
+                elif rounds_considered > 18 and num_differentials <= 18:
+                    # lowest 6 scores
+                    hcp = sum(sorted(score_differentials)[:6])/6
+                elif rounds_considered > 19 and num_differentials <= 19:
+                    # lowest 7 scores
+                    hcp = sum(sorted(score_differentials)[:7])/7
+                else:
+                    # lowest N scores
+                    hcp = sum(sorted(score_differentials)[:best_rounds])/best_rounds
+                hcp = round(hcp, 1)
+            new_hcps[player_uuid] = hcp
+
+        return new_hcps
