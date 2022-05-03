@@ -1,4 +1,4 @@
-name: Run cypress tests
+name: Run tests
 on: [push]
 jobs:
   webtest:
