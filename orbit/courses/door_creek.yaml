@@ -1,0 +1,296 @@
+name: Door Creek
+holes:
+- par: 4
+  hcp: 11
+  short_hcp: 7
+  yardages:
+    Blue: 362
+    White: 344
+    Gold: 344
+    Red: 312
+- par: 4
+  hcp: 1
+  short_hcp: 9
+  yardages:
+    Blue: 399
+    White: 374
+    Gold: 314
+    Red: 314
+- par: 4
+  hcp: 5
+  short_hcp: 1
+  yardages:
+    Blue: 382
+    White: 334
+    Gold: 289
+    Red: 289
+- par: 5
+  hcp: 3
+  short_hcp: 5
+  yardages:
+    Blue: 515
+    White: 499
+    Gold: 423
+    Red: 423
+- par: 3
+  hcp: 15
+  short_hcp: 15
+  yardages:
+    Blue: 154
+    White: 114
+    Gold: 114
+    Red: 83
+- par: 4
+  hcp: 7
+  short_hcp: 13
+  yardages:
+    Blue: 406
+    White: 386
+    Gold: 323
+    Red: 323
+- par: 4
+  hcp: 9
+  short_hcp: 3
+  yardages:
+    Blue: 427
+    White: 410
+    Gold: 387
+    Red: 387
+- par: 3
+  hcp: 17
+  short_hcp: 17
+  yardages:
+    Blue: 181
+    White: 159
+    Gold: 159
+    Red: 66
+- par: 4
+  hcp: 13
+  short_hcp: 11
+  yardages:
+    Blue: 336
+    White: 315
+    Gold: 315
+    Red: 259
+- par: 4
+  hcp: 2
+  short_hcp: 2
+  yardages:
+    Blue: 407
+    White: 388
+    Gold: 349
+    Red: 349
+- par: 3
+  hcp: 18
+  short_hcp: 16
+  yardages:
+    Blue: 195
+    White: 177
+    Gold: 135
+    Red: 135
+- par: 4
+  hcp: 8
+  short_hcp: 10
+  yardages:
+    Blue: 410
+    White: 365
+    Gold: 323
+    Red: 323
+- par: 4
+  hcp: 12
+  short_hcp: 8
+  yardages:
+    Blue: 324
+    White: 314
+    Gold: 314
+    Red: 284
+- par: 3
+  hcp: 16
+  short_hcp: 18
+  yardages:
+    Blue: 163
+    White: 137
+    Gold: 137
+    Red: 122
+- par: 5
+  hcp: 6
+  short_hcp: 12
+  yardages:
+    Blue: 494
+    White: 484
+    Gold: 429
+    Red: 429
+- par: 4
+  hcp: 10
+  short_hcp: 6
+  yardages:
+    Blue: 419
+    White: 399
+    Gold: 364
+    Red: 364
+- par: 5
+  hcp: 4
+  short_hcp: 14
+  yardages:
+    Blue: 517
+    White: 486
+    Gold: 428
+    Red: 428
+- par: 4
+  hcp: 14
+  short_hcp: 4
+  yardages:
+    Blue: 394
+    White: 378
+    Gold: 378
+    Red: 299
+---
+name: Door Creek (front)
+holes:
+- par: 4
+  hcp: 11
+  short_hcp: 7
+  yardages:
+    Blue: 362
+    White: 344
+    Gold: 344
+    Red: 312
+- par: 4
+  hcp: 1
+  short_hcp: 9
+  yardages:
+    Blue: 399
+    White: 374
+    Gold: 314
+    Red: 314
+- par: 4
+  hcp: 5
+  short_hcp: 1
+  yardages:
+    Blue: 382
+    White: 334
+    Gold: 289
+    Red: 289
+- par: 5
+  hcp: 3
+  short_hcp: 5
+  yardages:
+    Blue: 515
+    White: 499
+    Gold: 423
+    Red: 423
+- par: 3
+  hcp: 15
+  short_hcp: 15
+  yardages:
+    Blue: 154
+    White: 114
+    Gold: 114
+    Red: 83
+- par: 4
+  hcp: 7
+  short_hcp: 13
+  yardages:
+    Blue: 406
+    White: 386
+    Gold: 323
+    Red: 323
+- par: 4
+  hcp: 9
+  short_hcp: 3
+  yardages:
+    Blue: 427
+    White: 410
+    Gold: 387
+    Red: 387
+- par: 3
+  hcp: 17
+  short_hcp: 17
+  yardages:
+    Blue: 181
+    White: 159
+    Gold: 159
+    Red: 66
+- par: 4
+  hcp: 13
+  short_hcp: 11
+  yardages:
+    Blue: 336
+    White: 315
+    Gold: 315
+    Red: 259
+---
+name: Door Creek (back)
+holes:
+- par: 4
+  hcp: 2
+  short_hcp: 2
+  yardages:
+    Blue: 407
+    White: 388
+    Gold: 349
+    Red: 349
+- par: 3
+  hcp: 18
+  short_hcp: 16
+  yardages:
+    Blue: 195
+    White: 177
+    Gold: 135
+    Red: 135
+- par: 4
+  hcp: 8
+  short_hcp: 10
+  yardages:
+    Blue: 410
+    White: 365
+    Gold: 323
+    Red: 323
+- par: 4
+  hcp: 12
+  short_hcp: 8
+  yardages:
+    Blue: 324
+    White: 314
+    Gold: 314
+    Red: 284
+- par: 3
+  hcp: 16
+  short_hcp: 18
+  yardages:
+    Blue: 163
+    White: 137
+    Gold: 137
+    Red: 122
+- par: 5
+  hcp: 6
+  short_hcp: 12
+  yardages:
+    Blue: 494
+    White: 484
+    Gold: 429
+    Red: 429
+- par: 4
+  hcp: 10
+  short_hcp: 6
+  yardages:
+    Blue: 419
+    White: 399
+    Gold: 364
+    Red: 364
+- par: 5
+  hcp: 4
+  short_hcp: 14
+  yardages:
+    Blue: 517
+    White: 486
+    Gold: 428
+    Red: 428
+- par: 4
+  hcp: 14
+  short_hcp: 4
+  yardages:
+    Blue: 394
+    White: 378
+    Gold: 378
+    Red: 299

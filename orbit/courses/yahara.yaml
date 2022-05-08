@@ -348,3 +348,336 @@ holes:
     White: 484
     WhiteGold: 484
     Gold: 424
+---
+name: Yahara West
+holes:
+- par: 5
+  hcp: 3
+  short_hcp: 1
+  yardages:
+    Black: 516
+    Blue: 499
+    White: 478
+    WhiteGold: 478
+    Gold: 457
+- par: 4
+  hcp: 5
+  short_hcp: 9
+  yardages:
+    Black: 390
+    Blue: 379
+    White: 364
+    WhiteGold: 303
+    Gold: 303
+- par: 3
+  hcp: 15
+  short_hcp: 15
+  yardages:
+    Black: 191
+    Blue: 180
+    White: 170
+    WhiteGold: 170
+    Gold: 160
+- par: 4
+  hcp: 7
+  short_hcp: 13
+  yardages:
+    Black: 396
+    Blue: 377
+    White: 347
+    WhiteGold: 347
+    Gold: 288
+- par: 4
+  hcp: 13
+  short_hcp: 11
+  yardages:
+    Black: 421
+    Blue: 407
+    White: 383
+    WhiteGold: 326
+    Gold: 326
+- par: 5
+  hcp: 11
+  short_hcp: 3
+  yardages:
+    Black: 519
+    Blue: 505
+    White: 484
+    WhiteGold: 484
+    Gold: 410
+- par: 3
+  hcp: 17
+  short_hcp: 17
+  yardages:
+    Black: 184
+    Blue: 173
+    White: 159
+    WhiteGold: 159
+    Gold: 145
+- par: 4
+  hcp: 1
+  short_hcp: 5
+  yardages:
+    Black: 412
+    Blue: 399
+    White: 376
+    WhiteGold: 346
+    Gold: 346
+- par: 4
+  hcp: 9
+  short_hcp: 7
+  yardages:
+    Black: 416
+    Blue: 403
+    White: 384
+    WhiteGold: 334
+    Gold: 334
+- par: 4
+  hcp: 6
+  short_hcp: 6
+  yardages:
+    Black: 424
+    Blue: 411
+    White: 391
+    WhiteGold: 372
+    Gold: 372
+- par: 5
+  hcp: 12
+  short_hcp: 4
+  yardages:
+    Black: 479
+    Blue: 466
+    White: 448
+    WhiteGold: 448
+    Gold: 392
+- par: 4
+  hcp: 8
+  short_hcp: 8
+  yardages:
+    Black: 412
+    Blue: 389
+    White: 376
+    WhiteGold: 344
+    Gold: 344
+- par: 3
+  hcp: 18
+  short_hcp: 18
+  yardages:
+    Black: 174
+    Blue: 164
+    White: 152
+    WhiteGold: 152
+    Gold: 140
+- par: 4
+  hcp: 2
+  short_hcp: 10
+  yardages:
+    Black: 420
+    Blue: 405
+    White: 383
+    WhiteGold: 332
+    Gold: 332
+- par: 4
+  hcp: 16
+  short_hcp: 14
+  yardages:
+    Black: 387
+    Blue: 370
+    White: 343
+    WhiteGold: 343
+    Gold: 295
+- par: 4
+  hcp: 10
+  short_hcp: 12
+  yardages:
+    Black: 391
+    Blue: 377
+    White: 357
+    WhiteGold: 357
+    Gold: 309
+- par: 3
+  hcp: 14
+  short_hcp: 16
+  yardages:
+    Black: 222
+    Blue: 209
+    White: 191
+    WhiteGold: 143
+    Gold: 143
+- par: 5
+  hcp: 4
+  short_hcp: 2
+  yardages:
+    Black: 531
+    Blue: 514
+    White: 488
+    WhiteGold: 488
+    Gold: 427
+---
+name: Yahara West (front)
+holes:
+- par: 5
+  hcp: 3
+  short_hcp: 1
+  yardages:
+    Black: 516
+    Blue: 499
+    White: 478
+    WhiteGold: 478
+    Gold: 457
+- par: 4
+  hcp: 5
+  short_hcp: 9
+  yardages:
+    Black: 390
+    Blue: 379
+    White: 364
+    WhiteGold: 303
+    Gold: 303
+- par: 3
+  hcp: 15
+  short_hcp: 15
+  yardages:
+    Black: 191
+    Blue: 180
+    White: 170
+    WhiteGold: 170
+    Gold: 160
+- par: 4
+  hcp: 7
+  short_hcp: 13
+  yardages:
+    Black: 396
+    Blue: 377
+    White: 347
+    WhiteGold: 347
+    Gold: 288
+- par: 4
+  hcp: 13
+  short_hcp: 11
+  yardages:
+    Black: 421
+    Blue: 407
+    White: 383
+    WhiteGold: 326
+    Gold: 326
+- par: 5
+  hcp: 11
+  short_hcp: 3
+  yardages:
+    Black: 519
+    Blue: 505
+    White: 484
+    WhiteGold: 484
+    Gold: 410
+- par: 3
+  hcp: 17
+  short_hcp: 17
+  yardages:
+    Black: 184
+    Blue: 173
+    White: 159
+    WhiteGold: 159
+    Gold: 145
+- par: 4
+  hcp: 1
+  short_hcp: 5
+  yardages:
+    Black: 412
+    Blue: 399
+    White: 376
+    WhiteGold: 346
+    Gold: 346
+- par: 4
+  hcp: 9
+  short_hcp: 7
+  yardages:
+    Black: 416
+    Blue: 403
+    White: 384
+    WhiteGold: 334
+    Gold: 334
+---
+name: Yahara West (back)
+holes:
+- par: 4
+  hcp: 6
+  short_hcp: 6
+  yardages:
+    Black: 424
+    Blue: 411
+    White: 391
+    WhiteGold: 372
+    Gold: 372
+- par: 5
+  hcp: 12
+  short_hcp: 4
+  yardages:
+    Black: 479
+    Blue: 466
+    White: 448
+    WhiteGold: 448
+    Gold: 392
+- par: 4
+  hcp: 8
+  short_hcp: 8
+  yardages:
+    Black: 412
+    Blue: 389
+    White: 376
+    WhiteGold: 344
+    Gold: 344
+- par: 3
+  hcp: 18
+  short_hcp: 18
+  yardages:
+    Black: 174
+    Blue: 164
+    White: 152
+    WhiteGold: 152
+    Gold: 140
+- par: 4
+  hcp: 2
+  short_hcp: 10
+  yardages:
+    Black: 420
+    Blue: 405
+    White: 383
+    WhiteGold: 332
+    Gold: 332
+- par: 4
+  hcp: 16
+  short_hcp: 14
+  yardages:
+    Black: 387
+    Blue: 370
+    White: 343
+    WhiteGold: 343
+    Gold: 295
+- par: 4
+  hcp: 10
+  short_hcp: 12
+  yardages:
+    Black: 391
+    Blue: 377
+    White: 357
+    WhiteGold: 357
+    Gold: 309
+- par: 3
+  hcp: 14
+  short_hcp: 16
+  yardages:
+    Black: 222
+    Blue: 209
+    White: 191
+    WhiteGold: 143
+    Gold: 143
+- par: 5
+  hcp: 4
+  short_hcp: 2
+  yardages:
+    Black: 531
+    Blue: 514
+    White: 488
+    WhiteGold: 488
+    Gold: 427
