@@ -123,6 +123,12 @@ div.selection {
     margin-bottom: 1em;
 }
 
+article.home .next_round h4 {
+    margin: .6em 0;
+}
+article.home .next_round>div {
+    margin: .2em 0;
+}
 
 article.rounds .scorecard {
     border: 1px solid black;
@@ -260,4 +266,18 @@ article.edit_round .matchups, article.edit_round .players {
 article.edit_round .material-symbols-outlined {
     vertical-align: top;
     cursor: pointer;
+}
+
+#page-container>.msgcontainer {
+    position: fixed;
+    top: 1em;
+    left: 50%;
+    margin-left: -10em;
+    width: 18em;
+    border: .5em red solid;
+    background: white;
+    padding: .2em .5em;
+}
+#page-container>.msgcontainer .errmsg {
+    width: 100%;
 }

@@ -1,3 +1,9 @@
+var debug = false
+var logger = function(...args) {
+  if (debug) {
+    console.log(...args)
+  }
+}
 
 const Home = {
   data: function(){
@@ -18,6 +24,18 @@ const Home = {
     }
   },
   computed: {
+    next_round: function() {
+      let ret = {date: '', season: '', name: '', uuid: ''}
+      const today = '2021';//new Date().toISOString()
+      for (const r in this.data.rounds) {
+        const round = this.data.rounds[r];
+        console.log('next_round', round)
+        if (round.date > today && (ret.date == '' || ret.date > round.date)) {
+          ret = Object.assign(ret, round)
+        }
+      }
+      return ret
+    },
     seasons: function() {
       let ret = ''
       for (const s of this.data.seasons) {
@@ -37,8 +55,12 @@ const Home = {
   template: `
 <article class="home">
   <h2>Home</h2>
-  <p>{{ seasons }}</p>
-  <p>{{ rounds }}</p>
+  <div class="indent next_round">
+    <h4>Next round:</h4>
+    <div class="season">Season: {{ next_round.season }}</div>
+    <div class="date">Date: <router-link :to="{ name: 'rounds', query: { season: next_round.season, round: next_round.uuid }}">{{ next_round.date.split('T')[0] }}</router-link></div>
+    <div class="course">Course: {{ next_round.course }}</div>
+  </div>
 </article>`
 }
 
@@ -46,12 +68,23 @@ const Rounds = {
   data: function(){
     return {
       'season': '',
-      'round': ''
+      'round': '',
+      'updateTimeout': null,
+      'lastUpdate': 0,
     }
   },
   props: ['data'],
   created: function() {
+    // get all rounds once
+    this.data.send_msg({fn: 'get_rounds'})
     this.fetchData()
+    // periodically update selected round
+    document.addEventListener('visibilitychange', this.visibilitychange)
+    this.updateTimeout = setTimeout(() => this.timerfire(), 5000)
+  },
+  destroyed: function() {
+    document.removeEventListener('visibilitychange', this.visibilitychange)
+    clearTimeout(this.updateTimeout)
   },
   watch: {
     '$route': 'fetchData',
@@ -59,15 +92,35 @@ const Rounds = {
     'round': 'updateHistory',
   },
   methods: {
+    visibilitychange: function() {
+      console.log('visibility change', document.hidden)
+      if (!document.hidden) {
+        this.fetchData()
+      }
+    },
+    timerfire: function() {
+      if ((!document.hidden) && Date.now() - this.lastUpdate > 60000) {
+        this.fetchData()
+      }
+      clearTimeout(this.updateTimeout)
+      this.updateTimeout = setTimeout(() => this.timerfire(), 5000)
+    },
     fetchData: function() {
       console.log('fetchData()')
-      this.data.send_msg({fn: 'get_rounds'})
+      this.lastUpdate = Date.now()
       if (this.$route.query.season) {
         this.season = this.$route.query.season
       }
       if (this.$route.query.round) {
         this.round = this.$route.query.round
       }
+      let args = {fn: 'get_rounds'}
+      if (this.round != '') {
+        args = {fn: 'get_round', round: this.round}
+      } else if (this.season != '') {
+        args['season'] = this.season
+      }
+      this.data.send_msg(args)
     },
     updateHistory() {
       if (this.season && this.round) {
@@ -93,9 +146,7 @@ const Rounds = {
     },
     round_info: function() {
       if (this.round in this.data.rounds) {
-        const round = this.data.rounds[this.round];
-        this.data.send_msg({fn: 'get_course_details', course: round.course})
-        return round
+        return this.data.rounds[this.round]
       }
       return {}
     },
@@ -110,6 +161,8 @@ const Rounds = {
         const r = this.data.rounds[this.round]
         if (r.course in this.data.courses && this.data.courses[r.course].holes.length) {
           return this.data.courses[r.course].holes
+        } else {
+          this.data.send_msg({fn: 'get_course_details', course: r.course})
         }
       }
       return []
@@ -237,7 +290,7 @@ const Seasons = {
           net: net
         }
       }
-      console.log('player_scores', scores)
+      logger('player_scores', scores)
       return scores
     },
     player_ordering: function() {
@@ -328,7 +381,7 @@ const EditRound = {
     '$route': 'fetchData',
     'round': function() {
       if (this.round_course == '') {
-        console.log('watch round', this.round)
+        logger('watch round', this.round)
         this.round_date = this.round.date
         this.round_course = this.round.course
         let player_uuids = []
@@ -354,21 +407,21 @@ const EditRound = {
       }
     },
     'round_players': function() {
-      console.log('round_players', this.round_players)
+      logger('round_players', this.round_players)
     },
     'round_matchups': function() {
-      console.log('round_matchups', this.round_matchups)
+      logger('round_matchups', this.round_matchups)
     }
   },
   computed: {
     round: function() {
-      console.log('computed round()')
+      logger('computed round()')
       for (const uuid in this.data.rounds) {
         if (uuid == this.round_uuid) {
           return this.data.rounds[uuid]
         }
       }
-      console.log('computed round() not found')
+      logger('computed round() not found')
       return {}
     },
     players: function() {
@@ -397,13 +450,13 @@ const EditRound = {
   methods: {
     fetchData: function() {
       console.log('fetchData()', this.$route.query)
-      this.data.send_msg({fn: 'get_rounds'})
       if (this.$route.query.round) {
         this.round_uuid = this.$route.query.round
       } else {
         console.log('no round uuid, redirect to /seasons')
         this.$router.push({name: 'seasons'})
       }
+      this.data.send_msg({fn: 'get_round', round: this.round_uuid})
     },
     update_hcps: function() {
       let ret = {}
@@ -441,25 +494,25 @@ const EditRound = {
       this.round_matchups = ret
     },
     submit: function() {
-      console.log('submit', this)
+      logger('submit', this)
       if (this.round_date != '' && this.round_course != '') {
-        console.log(this.round)
+        logger(this.round)
         let players = {}
         for (const uuid of this.round_players) {
           let hcp = 0
           if (uuid in this.round_player_hcps) {
             hcp = this.round_player_hcps[uuid]
-            console.log('local hcp', hcp)
+            logger('local hcp', hcp)
           } else if ('current_hcp' in this.data.players[uuid]) {
             hcp = this.data.players[uuid].current_hcp
-            console.log('global hcp', hcp)
+            logger('global hcp', hcp)
           } else {
-            console.log('cannot find hcp for player '+uuid)
+            logger('cannot find hcp for player '+uuid)
           }
           let strokes = []
           if (uuid in this.round.players && 'strokes' in this.round.players[uuid]) {
             strokes = this.round.players[uuid].strokes
-            console.log('round strokes for player '+uuid+':', strokes)
+            logger('round strokes for player '+uuid+':', strokes)
           }
           if (this.round_course in this.data.courses && this.data.courses[this.round_course].holes.length > 0) {
             const num_holes = this.data.courses[this.round_course].holes.length;
@@ -471,7 +524,7 @@ const EditRound = {
               strokes.push(0)
             }
           } else {
-            console.log('course info not available for '+this.round_course)
+            logger('course info not available for '+this.round_course)
             return
           }
           players[uuid] = {
@@ -487,7 +540,7 @@ const EditRound = {
           players: players,
           matchups: this.round_matchups
         }
-        console.log('submit round update', msg)
+        logger('submit round update', msg)
         this.data.send_msg(msg)
       }
     }
@@ -563,7 +616,7 @@ const NewPlayer = {
           hcp: this.hcp,
           tee: this.tee
         }
-        console.log('submit new player', msg)
+        logger('submit new player', msg)
         this.data.send_msg(msg)
       }
     }
@@ -645,10 +698,10 @@ Vue.component('new_round', {
   props: ['season', 'data', 'courses'],
   methods: {
     submit: function(){
-      console.log('submit', this.date, this.course)
+      logger('submit', this.date, this.course)
       if (this.date != '' && this.course != '') {
         const msg = {fn: 'new_round', season: this.season, date: this.date, course: this.course}
-        console.log('submit new round', msg)
+        logger('submit new round', msg)
         this.data.send_msg(msg)
       }
     }
@@ -676,6 +729,11 @@ Vue.component('scorecard', {
   data: function(){
     return {
       edit: false
+    }
+  },
+  created: function() {
+    if (this.$route.query.edit) {
+      this.edit = this.$route.query.edit == 'true'
     }
   },
   props: ['round', 'course_name', 'course', 'data'],
@@ -733,8 +791,8 @@ Vue.component('scorecard', {
   },
   watch: {
     player: function(newVal, oldVal) {
-      console.log('player updated', newVal)
-    }
+      logger('player updated', newVal)
+    },
   },
   methods: {
     stroke: function(event) {
@@ -749,7 +807,7 @@ Vue.component('scorecard', {
           strokes.push(this.players[player].strokes[hole.num-1])
         }
       }
-      console.log('player takes stroke', player, holenum, val, strokes)
+      logger('player takes stroke', player, holenum, val, strokes)
       this.data.send_msg({
         fn: 'update_round_set_strokes',
         round: this.round.uuid,
@@ -759,6 +817,10 @@ Vue.component('scorecard', {
     },
     edit_button: function(event) {
       this.edit = !this.edit
+      let query = Object.assign({}, this.$route.query)
+      query['edit'] = this.edit
+      logger('edit option in query:', query)
+      this.$router.push({ query: query })
     }
   },
   template: `
@@ -827,7 +889,7 @@ Vue.component('matchup', {
           break
         }
       }
-      console.log('match tee: '+ret)
+      logger('match tee: '+ret)
       return ret
     },
     holes_by_hcp: function() {
@@ -841,7 +903,7 @@ Vue.component('matchup', {
         const b_hcp = this.course[b-1][hcp_key]
         return a_hcp-b_hcp
       })
-      console.log('holes_by_hcp', ret)
+      logger('holes_by_hcp', ret)
       return ret
     },
     match_players: function() {
@@ -879,7 +941,7 @@ Vue.component('matchup', {
           min_hcp = player.hcp
         }
       }
-      console.log('min_hcp: ', min_hcp)
+      logger('min_hcp: ', min_hcp)
       return min_hcp
     },
     adjusted_hcps: function() {
@@ -888,7 +950,7 @@ Vue.component('matchup', {
         const player = this.players[uuid]
         ret[uuid] = player.hcp - this.min_hcp
       }
-      console.log('adjusted_hcps:', ret)
+      logger('adjusted_hcps:', ret)
       return ret
     },
     adjusted_hcp_strokes: function() {
@@ -904,9 +966,9 @@ Vue.component('matchup', {
       let sorted_hole_index = 0
       while (Object.values(hcps).some((e) => e > 0)) {
         let hole_index = sorted_holes[sorted_hole_index]-1
-        console.log('dot on hole_index', hole_index)
+        logger('dot on hole_index', hole_index)
         for (const uuid in hcps) {
-          console.log('eval', uuid, dots[uuid], hcps[uuid], strokes[uuid])
+          logger('eval', uuid, dots[uuid], hcps[uuid], strokes[uuid])
           if (hcps[uuid] > 0) {
             hcps[uuid] -= 1
             dots[uuid][hole_index] += 1
@@ -927,7 +989,7 @@ Vue.component('matchup', {
           'total': this.players[uuid].hcp - this.min_hcp
         }
       }
-      console.log('adjusted_hcp_strokes:', ret)
+      logger('adjusted_hcp_strokes:', ret)
       return ret
     },
     hole_winners: function() {
@@ -958,7 +1020,7 @@ Vue.component('matchup', {
           ret.push(hole_winners)
         }
       }
-      console.log('hole_winners():', ret)
+      logger('hole_winners():', ret)
       return ret
     },
     hole_points: function() {
@@ -968,7 +1030,7 @@ Vue.component('matchup', {
           return {}
         }
         const pts = 1./players.length;
-        console.log('hole_points players', players, pts)
+        logger('hole_points players', players, pts)
         for (const uuid of players) {
           if (uuid in total_points) {
             total_points[uuid] += pts
@@ -977,7 +1039,7 @@ Vue.component('matchup', {
           }
         }
       }
-      console.log('hole_points:', total_points)
+      logger('hole_points:', total_points)
       return total_points
     },
     low_net: function() {
@@ -999,7 +1061,7 @@ Vue.component('matchup', {
           low_net_players[uuid] = uuid
         }
       }
-      console.log('low_net:', low_net_players)
+      logger('low_net:', low_net_players)
       return low_net_players
     },
     total_points: function() {
@@ -1016,14 +1078,14 @@ Vue.component('matchup', {
         }
         ret[uuid] = pts
       }
-      console.log('total_points:', ret)
+      logger('total_points:', ret)
       return ret
     }
   },
   methods: {
     hole_class: function(player, hole) {
       const v = this.hole_winners[hole]
-      console.log('hole_class('+player+', '+hole+'): ', v)
+      logger('hole_class('+player+', '+hole+'): ', v)
       if (v == null) {
         return ''
       } else if (v.length == 1 && v[0] == player) {
@@ -1134,6 +1196,24 @@ Vue.component('navpage', {
   template: '<li :class="classObj"><router-link :to="path">{{ cleanedName }}</router-link></li>'
 });
 
+Vue.component('errmsg', {
+  data: function(){
+    return {
+      data: null
+    }
+  },
+  props: ['data'],
+  computed: {
+    msg: function() {
+      return this.data.msg
+    },
+    active: function() {
+      return this.msg != ''
+    }
+  },
+  template: '<div class="msgcontainer" v-if="active"><div class="errmsg">Warning: {{ msg }}</div></div>'
+});
+
 // scrollBehavior:
 // - only available in html5 history mode
 // - defaults to no scroll behavior
@@ -1208,6 +1288,7 @@ async function vue_startup(data){
   const app = new Vue({
     el: '#page-container',
     data: {
+      data: data,
       routes: available_routes,
       current: 'home'
     },

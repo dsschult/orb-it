@@ -139,6 +139,7 @@ class WSHandler(tornado.websocket.WebSocketHandler):
         })
 
     async def on_message(self, message):
+        logging.debug('on_message %r', self.auth_key)
         await self.livescores.process(message, self.write_message)
 
     def on_close(self):
@@ -152,9 +153,11 @@ class LiveScores:
         self.players = players
 
     def register(self, key, data):
+        logging.debug('register connection %r', key)
         self.connections[key] = data
 
     def deregister(self, key):
+        logging.debug('deregister connection %r', key)
         if key in self.connections:
             del self.connections[key]
 
@@ -163,6 +166,7 @@ class LiveScores:
             con['call'](message)
 
     async def process(self, message, writer):
+        logging.debug('connections: %r', list(self.connections.keys()))
         logging.debug(f'process message: {message}')
         # decode message
         data = tornado.escape.json_decode(message)
@@ -206,6 +210,13 @@ class LiveScores:
             ret = await self.scorecards.list_seasons()
             update = {
                 'fn': 'get_seasons',
+                'data': ret,
+            }
+        elif data['fn'] == 'get_round':
+            assert 'round' in data
+            ret = await self.scorecards.get_round(uuid=data['round'])
+            update = {
+                'fn': 'get_rounds',
                 'data': ret,
             }
         elif data['fn'] == 'get_rounds':
@@ -278,13 +289,14 @@ class LiveScores:
                 'fn': 'update_rounds',
                 'data': ret,
             }
-            
-            
 
-        if update:
-            writer(tornado.escape.json_encode(update))
-        elif update_all:
-            self.send_all(tornado.escape.json_encode(update_all))
+        try:
+            if update:
+                await writer(tornado.escape.json_encode(update))
+            elif update_all:
+                self.send_all(tornado.escape.json_encode(update_all))
+        except Exception:
+            logging.warning('error writing to ws', exc_info=True)
 
 def getconf():
     port = int(os.environ.get('PORT', '80'))
