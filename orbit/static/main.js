@@ -26,7 +26,7 @@ const Home = {
   computed: {
     next_round: function() {
       let ret = {date: '', season: '', name: '', uuid: ''}
-      const today = '2021';//new Date().toISOString()
+      const today = new Date().toISOString()
       for (const r in this.data.rounds) {
         const round = this.data.rounds[r];
         console.log('next_round', round)
