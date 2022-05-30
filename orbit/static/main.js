@@ -391,7 +391,7 @@ const EditRound = {
         this.round_players = player_uuids
         let player_hcps = {}
         for (const uuid of player_uuids) {
-          player_hcps[uuid] = this.round.players[uuid].hcp
+          player_hcps[uuid] = Math.round(this.round.players[uuid].hcp/2)
         }
         this.round_player_hcps = player_hcps
         let matchups = []
@@ -408,6 +408,17 @@ const EditRound = {
     },
     'round_players': function() {
       logger('round_players', this.round_players)
+      let player_hcps = {}
+      for (const uuid of this.round_players) {
+        if (uuid in this.round_player_hcps) {
+          player_hcps[uuid] = this.round_player_hcps[uuid]
+        } else if (uuid in this.round.players) {
+          player_hcps[uuid] = Math.round(this.round.players[uuid].hcp/2)
+        } else {
+          player_hcps[uuid] = Math.round(this.data.players[uuid].current_hcp/2)
+        }
+      }
+      this.round_player_hcps = player_hcps
     },
     'round_matchups': function() {
       logger('round_matchups', this.round_matchups)
@@ -461,7 +472,7 @@ const EditRound = {
     update_hcps: function() {
       let ret = {}
       for (const uuid of this.round_players) {
-        ret[uuid] = this.players[uuid].current_hcp
+        ret[uuid] = Math.round(this.players[uuid].current_hcp/2)
       }
       this.round_player_hcps = ret
     },
@@ -501,7 +512,7 @@ const EditRound = {
         for (const uuid of this.round_players) {
           let hcp = 0
           if (uuid in this.round_player_hcps) {
-            hcp = this.round_player_hcps[uuid]
+            hcp = this.round_player_hcps[uuid]*2
             logger('local hcp', hcp)
           } else if ('current_hcp' in this.data.players[uuid]) {
             hcp = this.data.players[uuid].current_hcp
@@ -567,10 +578,14 @@ const EditRound = {
   <div>
     <label for="players">Players:</label>
     <div class="players">
-      <div><select name="players" v-model="round_players" multiple>
-        <option v-for="val, uuid in data.players" :value="uuid" :data-test="val.name">{{ val.name }}</option>
-      </select></div>
-      <button @click="update_hcps" data-test="update_hcps">Update HCPs</button>
+      <div class="player" v-for="val, uuid in data.players" :data-test="val.name">
+        <input :name="uuid" :value="uuid" type="checkbox" v-model="round_players">
+        <label :for="uuid">{{ val.name }}</label>
+        <div class="player_hcp" v-if="uuid in players">
+          HCP (9 holes): <input type="number" v-model.number="round_player_hcps[uuid]">
+        </div>
+      </div>
+      <button @click="update_hcps" data-test="update_hcps">Update all HCPs to current</button>
     </div>
   </div>
   <div>

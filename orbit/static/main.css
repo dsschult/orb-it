@@ -251,16 +251,30 @@ article.edit_round>div, article.new_player>div {
     margin: .8em 1em;
     padding: .2em 0;
 }
-article.edit_round>div label, article.new_player>div label {
+article.edit_round>div>label, article.new_player>div>label {
     vertical-align: top;
-    width: 5em;
+    width: 6em;
     display: inline-block;
 }
 article.new_player>div label {
     width: 8em;
 }
+article.edit_round .player {
+    line-height: 1.2em;
+    margin-bottom: .2em;
+}
+article.edit_round .player_hcp {
+    display: inline-block;
+    margin-left: 1em;
+}
+article.edit_round .player_hcp input {
+    width: 3em;
+}
 article.edit_round .matchups, article.edit_round .players {
     display: inline-block;
+}
+article.edit_round .matchups button, article.edit_round .players button {
+    margin-top: .4em;
 }
 
 article.edit_round .material-symbols-outlined {
