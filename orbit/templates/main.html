@@ -142,6 +142,14 @@ var onmessage = function (evt) {
     }
     global_data.rounds = rounds
   }
+  else if (data.fn == 'delete_round') {
+    const round_uuid = data.data['round']
+    if (round_uuid in global_data.rounds) {
+      let rounds = Object.assign({}, global_data.rounds)
+      delete rounds[round_uuid]
+      global_data.rounds = rounds
+    }
+  }
   else if (data.fn == 'get_course_list') {
     let courses = Object.assign({}, global_data.courses)
     for (const c of data.data) {

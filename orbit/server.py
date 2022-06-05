@@ -219,6 +219,17 @@ class LiveScores:
                 'fn': 'get_rounds',
                 'data': ret,
             }
+        elif data['fn'] == 'delete_round':
+            assert 'round' in data
+            try:
+                await self.scorecards.delete_round(uuid=data['round'])
+            except Exception:
+                logging.warning('error deleting round', exc_info=True)
+            else:
+                update_all = {
+                    'fn': 'delete_round',
+                    'data': {'round': data['round']},
+                }
         elif data['fn'] == 'get_rounds':
             kwargs = {}
             if 'season' in data:

@@ -57,5 +57,9 @@ describe('seasons', () => {
     cy.get('[data-test=new_round_submit]').click()
     
     cy.get('[data-test="2021-10-11T01:02"]').should('exist')
+
+    cy.get('[data-test="2021-10-11T01:02"]').contains('delete_forever').click()
+
+    cy.get('[data-test="2021-10-11T01:02"]').should('not.exist')
   })
 })

@@ -110,6 +110,11 @@ class ScoreCard(_Base):
         ret = await self.db.rounds.find_one({'uuid': uuid}, {'_id': False})
         return {uuid: ret}
 
+    async def delete_round(self, uuid):
+        ret = await self.db.rounds.delete_one({'uuid': uuid})
+        if ret.deleted_count != 1:
+            raise Exception('cannot delete round')
+
     async def find_rounds(self, season=None, date=None, course=None):
         filter = {}
         if season:

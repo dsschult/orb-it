@@ -241,6 +241,9 @@ const Seasons = {
         }
       }
       return ret
+    },
+    delete_round: function(uuid) {
+      this.data.send_msg({fn: 'delete_round', round: uuid})
     }
   },
   computed: {
