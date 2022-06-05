@@ -1,0 +1,224 @@
+name: Pleasant View (Woods)
+holes:
+- par: 5
+  hcp: 2
+  short_hcp: 2
+  yardages:
+    Black: 525
+    Silver: 505
+    Green: 487
+    Lavender: 400
+- par: 3
+  hcp: 9
+  short_hcp: 9
+  yardages:
+    Black: 202
+    Silver: 169
+    Green: 148
+    Lavender: 140
+- par: 4
+  hcp: 4
+  short_hcp: 4
+  yardages:
+    Black: 431
+    Silver: 405
+    Green: 377
+    Lavender: 371
+- par: 5
+  hcp: 1
+  short_hcp: 1
+  yardages:
+    Black: 500
+    Silver: 481
+    Green: 462
+    Lavender: 450
+- par: 4
+  hcp: 7
+  short_hcp: 6
+  yardages:
+    Black: 415
+    Silver: 360
+    Green: 332
+    Lavender: 304
+- par: 4
+  hcp: 6
+  short_hcp: 5
+  yardages:
+    Black: 384
+    Silver: 369
+    Green: 355
+    Lavender: 296
+- par: 3
+  hcp: 8
+  short_hcp: 8
+  yardages:
+    Black: 190
+    Silver: 175
+    Green: 159
+    Lavender: 149
+- par: 4
+  hcp: 5
+  short_hcp: 7
+  yardages:
+    Black: 374
+    Silver: 354
+    Green: 315
+    Lavender: 290
+- par: 4
+  hcp: 3
+  short_hcp: 3
+  yardages:
+    Black: 460
+    Silver: 411
+    Green: 377
+    Lavender: 339
+---
+name: Pleasant View (Prairie)
+holes:
+- par: 5
+  hcp: 3
+  short_hcp: 3
+  yardages:
+    Black: 501
+    Silver: 482
+    Green: 464
+    Lavender: 399
+- par: 3
+  hcp: 8
+  short_hcp: 8
+  yardages:
+    Black: 184
+    Silver: 166
+    Green: 147
+    Lavender: 135
+- par: 5
+  hcp: 1
+  short_hcp: 1
+  yardages:
+    Black: 531
+    Silver: 489
+    Green: 459
+    Lavender: 433
+- par: 4
+  hcp: 5
+  short_hcp: 5
+  yardages:
+    Black: 377
+    Silver: 354
+    Green: 333
+    Lavender: 310
+- par: 3
+  hcp: 9
+  short_hcp: 9
+  yardages:
+    Black: 172
+    Silver: 149
+    Green: 132
+    Lavender: 121
+- par: 4
+  hcp: 6
+  short_hcp: 6
+  yardages:
+    Black: 335
+    Silver: 317
+    Green: 301
+    Lavender: 278
+- par: 4
+  hcp: 4
+  short_hcp: 4
+  yardages:
+    Black: 386
+    Silver: 372
+    Green: 358
+    Lavender: 299
+- par: 3
+  hcp: 7
+  short_hcp: 7
+  yardages:
+    Black: 222
+    Silver: 202
+    Green: 177
+    Lavender: 157
+- par: 5
+  hcp: 2
+  short_hcp: 2
+  yardages:
+    Black: 513
+    Silver: 500
+    Green: 481
+    Lavender: 428
+---
+name: Pleasant View (Lake)
+holes:
+- par: 4
+  hcp: 6
+  short_hcp: 4
+  yardages:
+    Black: 412
+    Silver: 366
+    Green: 342
+    Lavender: 316
+- par: 5
+  hcp: 1
+  short_hcp: 1
+  yardages:
+    Black: 525
+    Silver: 502
+    Green: 447
+    Lavender: 403
+- par: 4
+  hcp: 4
+  short_hcp: 3
+  yardages:
+    Black: 382
+    Silver: 363
+    Green: 354
+    Lavender: 333
+- par: 3
+  hcp: 8
+  short_hcp: 8
+  yardages:
+    Black: 195
+    Silver: 177
+    Green: 162
+    Lavender: 146
+- par: 4
+  hcp: 3
+  short_hcp: 2
+  yardages:
+    Black: 361
+    Silver: 343
+    Green: 329
+    Lavender: 312
+- par: 4
+  hcp: 5
+  short_hcp: 7
+  yardages:
+    Black: 345
+    Silver: 329
+    Green: 316
+    Lavender: 236
+- par: 3
+  hcp: 9
+  short_hcp: 9
+  yardages:
+    Black: 184
+    Silver: 164
+    Green: 146
+    Lavender: 129
+- par: 4
+  hcp: 7
+  short_hcp: 6
+  yardages:
+    Black: 358
+    Silver: 337
+    Green: 327
+    Lavender: 321
+- par: 4
+  hcp: 2
+  short_hcp: 5
+  yardages:
+    Black: 441
+    Silver: 385
+    Green: 358
+    Lavender: 284

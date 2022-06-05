@@ -1,0 +1,260 @@
+name: Odana
+holes:
+- par: 4
+  hcp: 13
+  short_hcp: 11
+  yardages:
+    Blue: 354
+    White: 343
+    Gold: 323
+- par: 5
+  hcp: 3
+  short_hcp: 1
+  yardages:
+    Blue: 505
+    White: 475
+    Gold: 423
+- par: 4
+  hcp: 1
+  short_hcp: 5
+  yardages:
+    Blue: 454
+    White: 435
+    Gold: 373
+- par: 3
+  hcp: 15
+  short_hcp: 17
+  yardages:
+    Blue: 161
+    White: 145
+    Gold: 131
+- par: 4
+  hcp: 11
+  short_hcp: 13
+  yardages:
+    Blue: 363
+    White: 352
+    Gold: 298
+- par: 5
+  hcp: 7
+  short_hcp: 3
+  yardages:
+    Blue: 471
+    White: 460
+    Gold: 438
+- par: 3
+  hcp: 17
+  short_hcp: 15
+  yardages:
+    Blue: 213
+    White: 175
+    Gold: 151
+- par: 4
+  hcp: 5
+  short_hcp: 7
+  yardages:
+    Blue: 409
+    White: 393
+    Gold: 349
+- par: 4
+  hcp: 9
+  short_hcp: 9
+  yardages:
+    Blue: 368
+    White: 350
+    Gold: 310
+- par: 4
+  hcp: 10
+  short_hcp: 12
+  yardages:
+    Blue: 365
+    White: 357
+    Gold: 326
+- par: 5
+  hcp: 2
+  short_hcp: 2
+  yardages:
+    Blue: 514
+    White: 505
+    Gold: 463
+- par: 4
+  hcp: 8
+  short_hcp: 8
+  yardages:
+    Blue: 399
+    White: 391
+    Gold: 346
+- par: 3
+  hcp: 16
+  short_hcp: 16
+  yardages:
+    Blue: 176
+    White: 162
+    Gold: 151
+- par: 4
+  hcp: 14
+  short_hcp: 14
+  yardages:
+    Blue: 375
+    White: 362
+    Gold: 349
+- par: 5
+  hcp: 6
+  short_hcp: 4
+  yardages:
+    Blue: 505
+    White: 485
+    Gold: 426
+- par: 4
+  hcp: 4
+  short_hcp: 6
+  yardages:
+    Blue: 427
+    White: 393
+    Gold: 345
+- par: 3
+  hcp: 18
+  short_hcp: 18
+  yardages:
+    Blue: 164
+    White: 136
+    Gold: 123
+- par: 4
+  hcp: 12
+  short_hcp: 10
+  yardages:
+    Blue: 385
+    White: 375
+    Gold: 365
+---
+name: Odana (front)
+holes:
+- par: 4
+  hcp: 13
+  short_hcp: 11
+  yardages:
+    Blue: 354
+    White: 343
+    Gold: 323
+- par: 5
+  hcp: 3
+  short_hcp: 1
+  yardages:
+    Blue: 505
+    White: 475
+    Gold: 423
+- par: 4
+  hcp: 1
+  short_hcp: 5
+  yardages:
+    Blue: 454
+    White: 435
+    Gold: 373
+- par: 3
+  hcp: 15
+  short_hcp: 17
+  yardages:
+    Blue: 161
+    White: 145
+    Gold: 131
+- par: 4
+  hcp: 11
+  short_hcp: 13
+  yardages:
+    Blue: 363
+    White: 352
+    Gold: 298
+- par: 5
+  hcp: 7
+  short_hcp: 3
+  yardages:
+    Blue: 471
+    White: 460
+    Gold: 438
+- par: 3
+  hcp: 17
+  short_hcp: 15
+  yardages:
+    Blue: 213
+    White: 175
+    Gold: 151
+- par: 4
+  hcp: 5
+  short_hcp: 7
+  yardages:
+    Blue: 409
+    White: 393
+    Gold: 349
+- par: 4
+  hcp: 9
+  short_hcp: 9
+  yardages:
+    Blue: 368
+    White: 350
+    Gold: 310
+---
+name: Odana (back)
+holes:
+- par: 4
+  hcp: 10
+  short_hcp: 12
+  yardages:
+    Blue: 365
+    White: 357
+    Gold: 326
+- par: 5
+  hcp: 2
+  short_hcp: 2
+  yardages:
+    Blue: 514
+    White: 505
+    Gold: 463
+- par: 4
+  hcp: 8
+  short_hcp: 8
+  yardages:
+    Blue: 399
+    White: 391
+    Gold: 346
+- par: 3
+  hcp: 16
+  short_hcp: 16
+  yardages:
+    Blue: 176
+    White: 162
+    Gold: 151
+- par: 4
+  hcp: 14
+  short_hcp: 14
+  yardages:
+    Blue: 375
+    White: 362
+    Gold: 349
+- par: 5
+  hcp: 6
+  short_hcp: 4
+  yardages:
+    Blue: 505
+    White: 485
+    Gold: 426
+- par: 4
+  hcp: 4
+  short_hcp: 6
+  yardages:
+    Blue: 427
+    White: 393
+    Gold: 345
+- par: 3
+  hcp: 18
+  short_hcp: 18
+  yardages:
+    Blue: 164
+    White: 136
+    Gold: 123
+- par: 4
+  hcp: 12
+  short_hcp: 10
+  yardages:
+    Blue: 385
+    White: 375
+    Gold: 365

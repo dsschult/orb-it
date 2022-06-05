@@ -1,0 +1,224 @@
+name: Foxboro
+holes:
+- par: 4
+  hcp: 5
+  yardages:
+    Blue: 418
+    White: 364
+    Red: 344
+- par: 4
+  hcp: 13
+  yardages:
+    Blue: 297
+    White: 285
+    Red: 270
+- par: 4
+  hcp: 11
+  yardages:
+    Blue: 380
+    White: 317
+    Red: 289
+- par: 3
+  hcp: 17
+  yardages:
+    Blue: 146
+    White: 135
+    Red: 125
+- par: 4
+  hcp: 9
+  yardages:
+    Blue: 289
+    White: 273
+    Red: 223
+- par: 3
+  hcp: 15
+  yardages:
+    Blue: 211
+    White: 197
+    Red: 155
+- par: 5
+  hcp: 3
+  yardages:
+    Blue: 457
+    White: 443
+    Red: 428
+- par: 4
+  hcp: 7
+  yardages:
+    Blue: 373
+    White: 359
+    Red: 310
+- par: 5
+  hcp: 1
+  yardages:
+    Blue: 511
+    White: 501
+    Red: 423
+- par: 4
+  hcp: 12
+  yardages:
+    Blue: 309
+    White: 300
+    Red: 283
+- par: 3
+  hcp: 16
+  yardages:
+    Blue: 138
+    White: 121
+    Red: 121
+- par: 4
+  hcp: 4
+  yardages:
+    Blue: 416
+    White: 393
+    Red: 379
+- par: 4
+  hcp: 6
+  yardages:
+    Blue: 407
+    White: 358
+    Red: 328
+- par: 5
+  hcp: 2
+  yardages:
+    Blue: 530
+    White: 516
+    Red: 445
+- par: 3
+  hcp: 14
+  yardages:
+    Blue: 192
+    White: 172
+    Red: 148
+- par: 4
+  hcp: 10
+  yardages:
+    Blue: 431
+    White: 405
+    Red: 378
+- par: 3
+  hcp: 18
+  yardages:
+    Blue: 177
+    White: 157
+    Red: 118
+- par: 4
+  hcp: 8
+  yardages:
+    Blue: 405
+    White: 358
+    Red: 300
+---
+name: Foxboro (front)
+holes:
+- par: 4
+  hcp: 5
+  yardages:
+    Blue: 418
+    White: 364
+    Red: 344
+- par: 4
+  hcp: 13
+  yardages:
+    Blue: 297
+    White: 285
+    Red: 270
+- par: 4
+  hcp: 11
+  yardages:
+    Blue: 380
+    White: 317
+    Red: 289
+- par: 3
+  hcp: 17
+  yardages:
+    Blue: 146
+    White: 135
+    Red: 125
+- par: 4
+  hcp: 9
+  yardages:
+    Blue: 289
+    White: 273
+    Red: 223
+- par: 3
+  hcp: 15
+  yardages:
+    Blue: 211
+    White: 197
+    Red: 155
+- par: 5
+  hcp: 3
+  yardages:
+    Blue: 457
+    White: 443
+    Red: 428
+- par: 4
+  hcp: 7
+  yardages:
+    Blue: 373
+    White: 359
+    Red: 310
+- par: 5
+  hcp: 1
+  yardages:
+    Blue: 511
+    White: 501
+    Red: 423
+---
+name: Foxboro (back)
+holes:
+- par: 4
+  hcp: 12
+  yardages:
+    Blue: 309
+    White: 300
+    Red: 283
+- par: 3
+  hcp: 16
+  yardages:
+    Blue: 138
+    White: 121
+    Red: 121
+- par: 4
+  hcp: 4
+  yardages:
+    Blue: 416
+    White: 393
+    Red: 379
+- par: 4
+  hcp: 6
+  yardages:
+    Blue: 407
+    White: 358
+    Red: 328
+- par: 5
+  hcp: 2
+  yardages:
+    Blue: 530
+    White: 516
+    Red: 445
+- par: 3
+  hcp: 14
+  yardages:
+    Blue: 192
+    White: 172
+    Red: 148
+- par: 4
+  hcp: 10
+  yardages:
+    Blue: 431
+    White: 405
+    Red: 378
+- par: 3
+  hcp: 18
+  yardages:
+    Blue: 177
+    White: 157
+    Red: 118
+- par: 4
+  hcp: 8
+  yardages:
+    Blue: 405
+    White: 358
+    Red: 300
