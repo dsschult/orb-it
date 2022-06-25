@@ -820,7 +820,7 @@ Vue.component('scorecard', {
   watch: {
     player: function(newVal, oldVal) {
       logger('player updated', newVal)
-    },
+    }
   },
   methods: {
     stroke: function(event) {
@@ -979,7 +979,7 @@ Vue.component('matchup', {
       return ret
     },
     holes_by_hcp: function() {
-      const hcp_key = this.tee == 'short' ? 'short_hcp' : 'hcp'
+      const hcp_key = this.tee == 'short' && 'short_hcp' in this.course[0] ? 'short_hcp' : 'hcp'
       let ret = []
       for (const hole of this.course) {
         ret.push(hole.num)

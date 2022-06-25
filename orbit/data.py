@@ -214,7 +214,7 @@ class ScoreCard(_Base):
                 logging.debug('scoring matchup: %r', player_names)
 
                 # rank holes by hcp
-                course_hcp_key = 'short_hcp' if any(player_data[player_uuid]['tee'] == 'short' for player_uuid in player_uuids) else 'hcp'
+                course_hcp_key = 'short_hcp' if any(player_data[player_uuid]['tee'] == 'short' for player_uuid in player_uuids) and 'short_hcp' in course_details['holes'][0] else 'hcp'
                 sorted_holes = sorted(course_details['holes'], key=lambda hole: hole[course_hcp_key])
                 logging.debug('sorted holes: %r', sorted_holes)
 
