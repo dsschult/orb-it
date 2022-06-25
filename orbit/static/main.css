@@ -135,9 +135,13 @@ article.rounds .scorecard {
     padding: 1em;
     display: inline-block;
 }
-article.rounds .scorecard .edit {
+article.rounds .scorecard .edit,
+article.rounds .scorecard .score_round,
+article.rounds .scorecard .edit_players {
   float: right;
   padding: 1em 0 0;
+  margin: 0 1em 0 0;
+  line-height: 1.5em;
 }
 article.rounds .scorecard tr td:first-child, article.rounds .scorecard tr th:first-child {
     text-align: left;

@@ -2,7 +2,7 @@ import logging
 import os
 from uuid import uuid4
 import yaml
-from pymongo import ReturnDocument
+from pymongo import ReturnDocument, DESCENDING
 
 
 def gen_uuid():
@@ -278,7 +278,7 @@ class ScoreCard(_Base):
             score_differentials = []
 
             # get differentials for prev rounds played
-            async for row in self.db.rounds.find({f'players.{player_uuid}.points': {'$exists': True}}, sort=[('date', pymongo.DESCENDING)]):
+            async for row in self.db.rounds.find({f'players.{player_uuid}.points': {'$exists': True}}, sort=[('date', DESCENDING)]):
                 course_details = await self.get_course_details(row['course'])
                 gross_score = sum(row['players'][player_uuid]['strokes'])
                 if with_slope and 'slope_rating' in course_details:
@@ -290,7 +290,9 @@ class ScoreCard(_Base):
                     score_differential = gross_score - course_par
 
                 if len(course_details['holes']) != 18:
-                    if score_differential_9:
+                    if oldCalc:
+                        score_differential *= 2
+                    elif score_differential_9:
                         score_differential += score_differential_9
                         score_differential_9 = None
                     else:
@@ -299,6 +301,10 @@ class ScoreCard(_Base):
                 score_differentials.append(round(score_differential, 1))
                 if len(score_differentials) >= rounds_considered:
                     break
+
+            if not score_differentials:
+                logging.info(f'no scores to calc hcp for player {player_uuid}')
+                continue
 
             if oldCalc:
                 # best N of M, no adjustments

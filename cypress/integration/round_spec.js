@@ -17,7 +17,7 @@ describe('rounds', () => {
     cy.get('[data-test=select-season-round]').should('exist')
   })
 
-  it('select season and round', () => {
+  it('select 2021-01-01', () => {
     cy.visit('/rounds', {
       auth: {
         username,
@@ -113,7 +113,26 @@ describe('rounds', () => {
     })
   })
 
-  it('select season and round', () => {
+  it('select 2021-01-02', () => {
+    cy.visit('/rounds', {
+      auth: {
+        username,
+        password,
+      },
+    })
+
+    cy.get('[data-test=select-season]').should('contain', '2021').select('2021')
+    cy.get('[data-test=select-round]').should('contain', '2021-01-02 Default')
+
+    cy.contains('2021-01-02 Default').then(($e) => {
+      cy.get('[data-test=select-round]').select($e.val())
+    })
+    cy.get('[data-test=select-season-round]').should('not.exist')
+
+    cy.get('.scorecard .score_round').should('not.exist')
+  })
+
+  it('select 2021-01-05', () => {
     cy.visit('/rounds', {
       auth: {
         username,
@@ -128,6 +147,8 @@ describe('rounds', () => {
       cy.get('[data-test=select-round]').select($e.val())
     })
     cy.get('[data-test=select-season-round]').should('not.exist')
+
+    cy.get('.scorecard .score_round').should('exist')
 
     cy.get('[data-test=matchup]:nth-child(1)').within(() => {
       cy.get('h3').should('contain', 'Matchup: Player5 vs Player6')

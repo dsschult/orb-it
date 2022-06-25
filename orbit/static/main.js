@@ -805,6 +805,16 @@ Vue.component('scorecard', {
         }
       }
       return ret
+    },
+    can_score_round: function() {
+      for (const p in this.players) {
+        for (const s of this.players[p].strokes) {
+          if (s <= 0) {
+            return false
+          }
+        }
+      }
+      return true
     }
   },
   watch: {
@@ -880,11 +890,21 @@ Vue.component('scorecard', {
         player: player_uuid,
         strokes: strokes
       })
+    },
+    score_round: function() {
+      this.data.send_msg({
+        fn: 'score_round',
+        round: this.round.uuid,
+      })
     }
   },
   template: `
 <div class="scorecard" data-test="scorecard">
   <div class="edit"><button v-on:click="edit_button">{{ edit ? "View" : "Edit"}} Mode</button></div>
+  <div class="edit_players">
+    <router-link :to="{ name: 'edit_round', query: { round: round.uuid }}" class="edit-link">Edit Players/Course</router-link>
+  </div>
+  <div class="score_round" v-if="can_score_round"><button @click="score_round">Score Round</button></div>
   <h3>{{ course_name }}</h3>
   <table>
     <tr class="hole">

@@ -291,7 +291,7 @@ class LiveScores:
             players = await self.players.get_players()
             ret = await self.scorecards.score_round(data['round'], player_data=players)
             if ret: # round was scored, so update player hcps
-                new_hcps = await self.scorecards.recalc_hcps(players)
+                new_hcps = await self.scorecards.recalc_hcps(players, rounds_considered=10, best_rounds=5, oldCalc=True)
                 for uuid in new_hcps:
                     await self.players.update_player(uuid, hcp=new_hcps[uuid])
             ret = await self.scorecards.get_round(data['round'])
