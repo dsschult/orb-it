@@ -839,6 +839,47 @@ Vue.component('scorecard', {
       query['edit'] = this.edit
       logger('edit option in query:', query)
       this.$router.push({ query: query })
+    },
+    bogey_score: function(player_uuid) {
+      let strokes = []
+      let player = this.players[player_uuid]
+      // first score par on each hole
+      for (const hole of this.course) {
+        let val = hole.par
+        strokes.push(val)
+      }
+
+      // now score net bogey (hcp + num holes)
+      const hcp_key = player.tee == 'short' && this.short_hcp ? 'short_hcp' : 'hcp'
+      let sorted_holes = []
+      for (const hole of this.course) {
+        sorted_holes.push(hole.num)
+      }
+      sorted_holes.sort((a,b) => {
+        const a_hcp = this.course[a-1][hcp_key]
+        const b_hcp = this.course[b-1][hcp_key]
+        return a_hcp-b_hcp
+      })
+      logger('holes_by_hcp', sorted_holes)
+      let extra_strokes = player.hcp + this.course.length
+      let sorted_hole_index = 0
+      while (extra_strokes > 0) {
+        let hole_index = sorted_holes[sorted_hole_index]-1
+        strokes[hole_index] += 1
+        extra_strokes -= 1
+        sorted_hole_index += 1
+        if (sorted_hole_index >= sorted_holes.length) {
+          sorted_hole_index = 0
+        }
+      }
+
+      logger('player scores all net bogeys', player_uuid, strokes)
+      this.data.send_msg({
+        fn: 'update_round_set_strokes',
+        round: this.round.uuid,
+        player: player_uuid,
+        strokes: strokes
+      })
     }
   },
   template: `
@@ -851,35 +892,42 @@ Vue.component('scorecard', {
       <th v-for="hole in course">{{ hole.num }}</th>
       <th>Total</th>
       <th>Net</th>
+      <th v-if="edit"></th>
     </tr>
     <tr class="yardage" v-for="(v,name) in yardages">
       <td>{{ name }}</td>
       <td v-for="hole in course">{{ hole.yardages[name] }}</th>
       <td>{{ v }}</td>
+      <td></td>
+      <td v-if="edit"></td>
     </tr>
     <tr class="hcp">
       <td>Handicap</td>
       <td v-for="hole in course">{{ hole.hcp }}</th>
       <td></td>
       <td></td>
+      <td v-if="edit"></td>
     </tr>
     <tr v-if="short_hcp" class="short_hcp">
       <td>Forward Hcp</td>
       <td v-for="h in short_hcp">{{ h }}</th>
       <td></td>
       <td></td>
+      <td v-if="edit"></td>
     </tr>
     <tr class="par">
       <td>Par</td>
       <td v-for="hole in course">{{ hole.par }}</th>
       <td>{{ total_par }}</td>
       <td>{{ total_par }}</td>
+      <td v-if="edit"></td>
     </tr>
     <tr class="player" v-for="(v, uuid) in players" :data-test="v.name">
       <td>{{ v.name }} <span class="hcp">+{{ v.hcp }}</span></td>
       <td v-for="hole in course"><input v-if="edit" type="number" :player="uuid" :hole="hole.num" :value="v.strokes[hole.num-1]" v-on:change="stroke" /><span v-else>{{ v.strokes[hole.num-1] }}</span></td>
       <td>{{ v.total_score }}</td>
       <td>{{ v.total_score - v.hcp }}</td>
+      <td v-if="edit"><button data-test="score_bogey" @click="bogey_score(uuid)">Net Bogey</button></td>
     </tr>
   </table>
 </div>`

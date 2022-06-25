@@ -162,5 +162,19 @@ describe('rounds', () => {
         cy.get('.total_points').should('contain', '7')
       })
     })
+
+    cy.get('.edit button').click()
+    cy.get('[data-test=scorecard] [data-test=Player6] [data-test=score_bogey]').click()
+    cy.get('[data-test=scorecard] [data-test=Player6] :nth-last-child(2)').should('contain', '45')
+    cy.get('[data-test=matchup]:nth-child(1) [data-test=Player6]').within(() => {
+      // nth child is hole num + 1
+      cy.get('td:nth-child(2)').should('have.class', 'tie')
+      cy.get('td:nth-child(3)').should('have.class', 'tie')
+      cy.get('td:nth-child(4)').should('have.class', 'tie')
+      cy.get('td:nth-child(7)').should('have.class', 'tie')
+      cy.get('td:nth-child(8)').should('have.class', 'win')
+      cy.get('td:nth-child(9)').should('have.class', 'tie')
+      cy.get('.total_points').should('contain', '3.5')
+    })
   })
 })

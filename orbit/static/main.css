@@ -172,6 +172,9 @@ article.rounds .scorecard tr.hcp td {
 article.rounds .scorecard td input {
     width: 3em;
 }
+article.rounds .scorecard:not(.matchup) tr.player:nth-child(odd) {
+    background: #eee;
+}
 
 article.rounds .matchups {
     display: flex;
