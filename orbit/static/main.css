@@ -232,7 +232,7 @@ article.seasons .cell:not(:first-child) {
 }
 article.seasons .cell.header {
     font-weight: bold;
-    min-height: 1.6em;
+    min-height: 3em;
     border-bottom: 1px solid black;
     margin-bottom: .3em;
 }
