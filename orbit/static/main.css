@@ -255,6 +255,7 @@ article.seasons .cell span.hcp {
     font-size: .8em;
     padding-left: .8em;
     float: right;
+    min-width: 2.2em;
 }
 article.seasons .season-overview {
     margin-bottom: 3em;
