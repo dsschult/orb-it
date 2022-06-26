@@ -248,6 +248,9 @@ article.seasons .season-overview .cell.header {
         height: 1.2em;
     }
 }
+article.seasons .season-overview .winpct {
+    text-align: right;
+}
 article.seasons .cell span.hcp {
     font-size: .8em;
     padding-left: .8em;

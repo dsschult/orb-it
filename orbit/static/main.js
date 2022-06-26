@@ -244,6 +244,9 @@ const Seasons = {
     },
     delete_round: function(uuid) {
       this.data.send_msg({fn: 'delete_round', round: uuid})
+    },
+    round2: function(num) {
+      return Math.round( ( num + Number.EPSILON ) * 100 ) / 100
     }
   },
   computed: {
@@ -304,7 +307,7 @@ const Seasons = {
           wins: wins,
           losses: losses,
           ties: ties,
-          win_pct: (wins + ties*.5) / (wins + ties + losses)
+          win_pct: (wins + ties*.5) / (wins + ties + losses) * 100
         }
       }
       logger('player_scores', scores)
@@ -365,25 +368,25 @@ const Seasons = {
       <div class="col match">
         <div class="cell header">Hole Points</div>
         <div class="cell" v-for="player_uuid in player_ordering">
-          {{ player_scores[player_uuid].match }}
+          {{ round2(player_scores[player_uuid].match) }}
         </div>
       </div>
       <div class="col net">
         <div class="cell header">Net Points</div>
         <div class="cell" v-for="player_uuid in player_ordering">
-          {{ player_scores[player_uuid].net }}
+          {{ round2(player_scores[player_uuid].net) }}
         </div>
       </div>
       <div class="col total">
         <div class="cell header">Total Points</div>
         <div class="cell" v-for="player_uuid in player_ordering">
-          {{ player_scores[player_uuid].total }}
+          {{ round2(player_scores[player_uuid].total) }}
         </div>
       </div>
       <div class="col winpct">
         <div class="cell header">Win %</div>
         <div class="cell" v-for="player_uuid in player_ordering">
-          {{ player_scores[player_uuid].win_pct }}
+          {{ player_scores[player_uuid].win_pct.toFixed(2) }}%
         </div>
       </div>
     </div>
