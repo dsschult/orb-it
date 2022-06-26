@@ -276,6 +276,9 @@ const Seasons = {
       for (const player_uuid in this.players) {
         let match = 0
         let net = 0
+        let wins = 0
+        let losses = 0
+        let ties = 0
         for (const uuid in this.rounds) {
           const round = this.rounds[uuid]
           if (player_uuid in round.players) {
@@ -284,13 +287,24 @@ const Seasons = {
               const pts = player_round.points
               match += pts.match
               net += pts.net
+              if (pts.net == 2 && pts.match == 4.5) {
+                ties += 1
+              } else if (pts.net + pts.match > 6.5) {
+                wins += 1
+              } else {
+                losses += 1
+              }
             }
           }
         }
         scores[player_uuid] = {
           total: match + net,
           match: match,
-          net: net
+          net: net,
+          wins: wins,
+          losses: losses,
+          ties: ties,
+          win_pct: (wins + ties*.5) / (wins + ties + losses)
         }
       }
       logger('player_scores', scores)
@@ -299,9 +313,9 @@ const Seasons = {
     player_ordering: function() {
       const scores = this.player_scores
       return Object.keys(scores).sort(function(a,b){
-        let ret = scores[b].total-scores[a].total
+        let ret = scores[b].win_pct-scores[a].win_pct
         if (ret == 0) {
-          ret = scores[b].match-scores[a].match
+          ret = scores[b].total-scores[a].total
         }
         return ret
       })
@@ -316,7 +330,65 @@ const Seasons = {
     </select>
   </div>
   <div v-if="season">
-    <div class="round_cols" data-test="season">
+    <h3>Season Overview</h3>
+    <div class="round_cols season-overview" data-test="season">
+      <div class="col">
+        <div class="cell header"></div>
+        <div class="cell" v-for="player_uuid in player_ordering" data-test="player-name">{{ players[player_uuid].name }}
+          <span class="hcp">+{{ Math.round(data.players[player_uuid].current_hcp/2) }}</span>
+        </div>
+      </div>
+      <div class="col place">
+        <div class="cell header">Place</div>
+        <div class="cell" v-for="player_uuid in player_ordering">
+          {{ player_ordering.indexOf(player_uuid)+1 }}
+        </div>
+      </div>
+      <div class="col wins">
+        <div class="cell header">Wins</div>
+        <div class="cell" v-for="player_uuid in player_ordering">
+          {{ player_scores[player_uuid].wins }}
+        </div>
+      </div>
+      <div class="col losses">
+        <div class="cell header">Losses</div>
+        <div class="cell" v-for="player_uuid in player_ordering">
+          {{ player_scores[player_uuid].losses }}
+        </div>
+      </div>
+      <div class="col ties">
+        <div class="cell header">Ties</div>
+        <div class="cell" v-for="player_uuid in player_ordering">
+          {{ player_scores[player_uuid].ties }}
+        </div>
+      </div>
+      <div class="col match">
+        <div class="cell header">Hole Points</div>
+        <div class="cell" v-for="player_uuid in player_ordering">
+          {{ player_scores[player_uuid].match }}
+        </div>
+      </div>
+      <div class="col net">
+        <div class="cell header">Net Points</div>
+        <div class="cell" v-for="player_uuid in player_ordering">
+          {{ player_scores[player_uuid].net }}
+        </div>
+      </div>
+      <div class="col total">
+        <div class="cell header">Total Points</div>
+        <div class="cell" v-for="player_uuid in player_ordering">
+          {{ player_scores[player_uuid].total }}
+        </div>
+      </div>
+      <div class="col winpct">
+        <div class="cell header">Win %</div>
+        <div class="cell" v-for="player_uuid in player_ordering">
+          {{ player_scores[player_uuid].win_pct }}
+        </div>
+      </div>
+    </div>
+    <h3>Round Details</h3>
+    <div class="round_cols season-details" data-test="season-details">
       <div class="col">
         <div class="cell header"></div>
         <div class="cell" v-for="player_uuid in player_ordering" data-test="player-name">{{ players[player_uuid].name }}</div>
@@ -332,30 +404,6 @@ const Seasons = {
         </div>
         <div class="cell" v-for="player_uuid in player_ordering">
           {{ get_points(round, player_uuid) }}
-        </div>
-      </div>
-      <div class="col hcp">
-        <div class="cell header">Current HCP</div>
-        <div class="cell" v-for="player_uuid in player_ordering">
-          {{ Math.round(data.players[player_uuid].current_hcp/2) }}
-        </div>
-      </div>
-      <div class="col match">
-        <div class="cell header">Match</div>
-        <div class="cell" v-for="player_uuid in player_ordering">
-          {{ player_scores[player_uuid].match }}
-        </div>
-      </div>
-      <div class="col net">
-        <div class="cell header">Net</div>
-        <div class="cell" v-for="player_uuid in player_ordering">
-          {{ player_scores[player_uuid].net }}
-        </div>
-      </div>
-      <div class="col total">
-        <div class="cell header">Total Points</div>
-        <div class="cell" v-for="player_uuid in player_ordering">
-          {{ player_scores[player_uuid].total }}
         </div>
       </div>
     </div>

@@ -230,12 +230,33 @@ article.seasons .cell {
 article.seasons .cell:not(:first-child) {
     text-align: right;
 }
+article.seasons .cell:not(:first-child):nth-child(odd) {
+    background: #eee;
+}
 article.seasons .cell.header {
     font-weight: bold;
-    min-height: 3em;
+    height: 3em;
     border-bottom: 1px solid black;
     margin-bottom: .3em;
 }
+article.seasons .season-overview .cell.header {
+    height: 2.5em;
+    margin-bottom: .1em;
+}
+@media screen and (min-width: 750px) {
+    article.seasons .season-overview .cell.header {
+        height: 1.2em;
+    }
+}
+article.seasons .cell span.hcp {
+    font-size: .8em;
+    padding-left: .8em;
+    float: right;
+}
+article.seasons .season-overview {
+    margin-bottom: 3em;
+}
+
 article.seasons .new_round {
     margin: 2em 0;
 }

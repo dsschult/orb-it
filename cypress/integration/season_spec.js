@@ -25,7 +25,7 @@ describe('seasons', () => {
 
     cy.get('[data-test=select-season]').should('contain', '2021').should('have.value', '2021').select('2021')
 
-    cy.get('[data-test=season]').within(() => {
+    cy.get('[data-test=season-details]').within(() => {
       cy.get('[data-test=player-name]:nth-child(2)').invoke('text').invoke('trim').should('equal', 'Player4')
       cy.get('[data-test=player-name]:nth-child(3)').invoke('text').invoke('trim').should('equal', 'Player1')
       cy.get('[data-test=player-name]:nth-child(4)').invoke('text').invoke('trim').should('equal', 'Player6')
