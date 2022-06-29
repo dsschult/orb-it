@@ -5,6 +5,7 @@ from functools import wraps
 import logging
 import os
 import time
+from uuid import uuid4
 
 import jwt
 import tornado.web
@@ -113,6 +114,7 @@ class WSHandler(tornado.websocket.WebSocketHandler):
         self.auth_data = None
         self.auth_key = None
         self.livescores = livescores
+        self.key = uuid4()
 
     def write_error(self, status_code=500, **kwargs):
         """Write out custom error json."""
@@ -133,18 +135,18 @@ class WSHandler(tornado.websocket.WebSocketHandler):
             logging.info('failed auth', exc_info=True)
             self.close()
 
-        self.livescores.register(self.auth_key, {
+        self.livescores.register(self.key, {
             'call': self.write_message,
             'auth_data': self.auth_data,
         })
 
     async def on_message(self, message):
-        logging.debug('on_message %r', self.auth_key)
+        logging.debug('on_message %r', self.key)
         await self.livescores.process(message, self.write_message)
 
     def on_close(self):
-        if self.auth_key:
-            self.livescores.deregister(self.auth_key)
+        if self.key:
+            self.livescores.deregister(self.key)
 
 class LiveScores:
     def __init__(self, scorecards=None, players=None, *args, **kwargs):
@@ -162,8 +164,14 @@ class LiveScores:
             del self.connections[key]
 
     def send_all(self, message):
-        for con in self.connections.values():
-            con['call'](message)
+        for key in list(self.connections):
+            con = self.connections[key]
+            try:
+                con['call'](message)
+            except tornado.websocket.WebSocketClosedError:
+                self.deregister(key)
+            except Exception:
+                logging.error(f'send_all: error sending WS message to {key}', exc_info=True)
 
     async def process(self, message, writer):
         logging.debug('connections: %r', list(self.connections.keys()))
