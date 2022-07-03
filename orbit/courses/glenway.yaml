@@ -1,0 +1,66 @@
+name: The Glen
+holes:
+- par: 4
+  hcp: 5
+  yardages:
+    Sumac: 261
+    Pine: 254
+    Lake: 239
+    Oak: 146
+- par: 3
+  hcp: 6
+  yardages:
+    Sumac: 185
+    Pine: 164
+    Lake: 145
+    Oak: 106
+- par: 3
+  hcp: 7
+  yardages:
+    Sumac: 155
+    Pine: 138
+    Lake: 112
+    Oak: 106
+- par: 4
+  hcp: 2
+  yardages:
+    Sumac: 389
+    Pine: 353
+    Lake: 292
+    Oak: 157
+- par: 5
+  short_par: 4
+  hcp: 1
+  yardages:
+    Sumac: 443
+    Pine: 421
+    Lake: 341
+    Oak: 261
+- par: 3
+  hcp: 8
+  yardages:
+    Sumac: 127
+    Pine: 117
+    Lake: 99
+    Oak: 77
+- par: 4
+  hcp: 3
+  yardages:
+    Sumac: 344
+    Pine: 323
+    Lake: 285
+    Oak: 228
+- par: 3
+  hcp: 9
+  yardages:
+    Sumac: 128
+    Pine: 106
+    Lake: 96
+    Oak: 65
+- par: 4
+  hcp: 4
+  yardages:
+    Sumac: 340
+    Pine: 326
+    Lake: 246
+    Oak: 193
